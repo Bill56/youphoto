@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">youphoto</string>
+    <string name="button_enter">enter</string>
+    <string name="activity_main_title">UPhoto</string>
+    <string name="activity_toast_quit">Please press again for quition.</string>
+    <string name="activity_main_btn_selpic">Select From Photos</string>
+    <string name="activity_main_btn_takephoto">Take A Photo</string>
+    <string name="fail_get_image">failed to get image</string>
+</resources>
