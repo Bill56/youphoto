@@ -15,12 +15,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bill56.youphoto.R;
 import cn.bill56.youphoto.util.AnimatorUtil;
 import cn.bill56.youphoto.util.LogUtil;
+import cn.bill56.youphoto.util.TimeUtil;
 import cn.bill56.youphoto.util.ToastUtil;
 
 
@@ -79,8 +83,9 @@ public class EditPicActivity extends BaseActivity {
     // 像素密度
     private float mDensity;
     // 编辑图片的路径
-    private  String imagePath;
-
+    private String imagePath;
+    // 保存当前图片的位图对象
+    private Bitmap bitmap = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +109,6 @@ public class EditPicActivity extends BaseActivity {
         imgEditingPic = (ImageView) findViewById(R.id.img_editing_pic);
         // 获取传递过来的intent中的数据
         imagePath = getIntent().getStringExtra("EDIT_PIC");
-        Bitmap bitmap = null;
         bitmap = BitmapFactory.decodeFile(imagePath);
         // 显示需要编辑的图片
         imgEditingPic.setImageBitmap(bitmap);
@@ -160,8 +164,67 @@ public class EditPicActivity extends BaseActivity {
                     // 调用按下返回键的方法
                     onBackPressed();
                     break;
+                // 点击的是应用栏的保存
+                case R.id.btn_save:
+                    doPicSave();
+                    break;
                 default:
                     break;
+            }
+        }
+
+        /**
+         * 图片保存的方法
+         * 生成的图片放在sd/uphotocache下，命名为当前时间戳的字符串表示+.jpg
+         */
+        private void doPicSave() {
+            // 获取设备的根目录
+            File sdDir = Environment.getExternalStorageDirectory();
+            // 创建缓存目录
+            File cacheDir = new File(sdDir, "UPhotocache");
+            // 如果不存在目录，则创建
+            if (!cacheDir.exists()) {
+                cacheDir.mkdir();
+            }
+            // 创建File对象，用于存储修改后的图片,以当前时间为文件名
+            File outputImage = new File(cacheDir,
+                    TimeUtil.timestamp2string(System.currentTimeMillis()) + ".jpg");
+            // 如果存在则删除
+            if (outputImage.exists()) {
+                outputImage.delete();
+            }
+            FileOutputStream out = null;
+            try {
+                out = new FileOutputStream(outputImage);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                // 执行到这说明保存成功
+                // 退出编辑界面，显示操作栏,将保存按钮禁用
+                // 调用关闭源动画效果
+                AnimatorUtil.animateClose(llEditActions);
+                // 开启新动画
+                AnimatorUtil.animateOpen(llOptions, mHiddenViewMeasuredHeight);
+                // 关闭保存按钮的功能
+                btnSave.setEnabled(false);
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                // 弹出提示框
+                ToastUtil.show(EditPicActivity.this,R.string.pic_share_error);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                // 弹出提示框
+                ToastUtil.show(EditPicActivity.this,R.string.pic_save_error);
+            } finally {
+                // 关闭流
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        out = null;
+                    }
+                }
             }
         }
 
@@ -171,9 +234,10 @@ public class EditPicActivity extends BaseActivity {
         private void doPicShare() {
             Intent intent = new Intent(Intent.ACTION_SEND);
             if (imagePath == null || imagePath.equals("")) {
-               // 提示图片不存在
-                ToastUtil.show(EditPicActivity.this,R.string.pic_share_error);
+                // 提示图片不存在
+                ToastUtil.show(EditPicActivity.this, R.string.pic_share_error);
             } else {
+                // 找到对应的文件引用
                 File f = new File(imagePath);
                 if (f != null && f.exists() && f.isFile()) {
                     intent.setType("image/*");

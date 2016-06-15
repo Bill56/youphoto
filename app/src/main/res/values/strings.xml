@@ -20,4 +20,5 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="pic_share_error">The picture was not found.</string>
+    <string name="pic_save_error">The picture saved fail.</string>
 </resources>
