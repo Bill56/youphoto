@@ -15,4 +15,9 @@
     <string name="button_edit_filter">Filter</string>
     <string name="button_edit_power">Power</string>
     <string name="button_edit_graffitir">Graffiti</string>
+    <string name="dialog_info_title">Infomation</string>
+    <string name="dialog_info_quit_msg">Do you want to quit editing picture?</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="pic_share_error">The picture was not found.</string>
 </resources>
