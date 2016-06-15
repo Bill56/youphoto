@@ -6,4 +6,13 @@
     <string name="activity_main_btn_selpic">Select From Photos</string>
     <string name="activity_main_btn_takephoto">Take A Photo</string>
     <string name="fail_get_image">failed to get image</string>
+    <string name="button_quit">Quit</string>
+    <string name="button_save">Save</string>
+    <string name="button_pic_edit">Edit</string>
+    <string name="button_pic_share">SHARE</string>
+    <string name="button_edit_romote">Romote</string>
+    <string name="button_edit_flag">Flag</string>
+    <string name="button_edit_filter">Filter</string>
+    <string name="button_edit_power">Power</string>
+    <string name="button_edit_graffitir">Graffiti</string>
 </resources>
