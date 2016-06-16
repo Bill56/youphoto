@@ -30,4 +30,6 @@
     <string name="seekbar_color">Color</string>
     <string name="seekbar_saturation">Saturation</string>
     <string name="seekbar_light">Light</string>
+    <string name="button_filter_old">Old</string>
+    <string name="pic_save_no_update">Picture was not updated.</string>
 </resources>

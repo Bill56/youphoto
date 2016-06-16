@@ -24,6 +24,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bill56.youphoto.R;
 import cn.bill56.youphoto.util.AnimatorUtil;
+import cn.bill56.youphoto.util.ImageUtil;
 import cn.bill56.youphoto.util.LinearLayoutUtil;
 import cn.bill56.youphoto.util.LogUtil;
 import cn.bill56.youphoto.util.TimeUtil;
@@ -63,20 +64,43 @@ public class EditPicActivity extends BaseActivity {
     @Bind(R.id.ll_edit_actions)
     LinearLayout llEditActions;
     // 图片编辑栏布局——旋转
-
+    @Bind(R.id.btn_edit_romote)
+    Button btnEditRomote;
     // 图片编辑栏布局——旗帜
-
+    @Bind(R.id.btn_edit_flag)
+    Button btnEditFlag;
     // 图片编辑栏布局——滤镜
     @Bind(R.id.btn_edit_filter)
-    Button btnFilter;
+    Button btnEditFilter;
     // 图片编辑栏布局——增强
     @Bind(R.id.btn_edit_power)
-    Button btnPower;
+    Button btnEditPower;
     // 图片编辑栏布局——涂鸦
 
     // 滤镜选择栏
     @Bind(R.id.ll_edit_filter)
     LinearLayout llEditFilter;
+    // 原图
+    @Bind(R.id.btn_filter_old)
+    Button btnFilterOld;
+    // 滤镜选择栏——灰度
+    @Bind(R.id.btn_filter_gray)
+    Button btnFilterGray;
+    // 滤镜选择栏——反转
+    @Bind(R.id.btn_filter_reversal)
+    Button btnFilterReversal;
+    // 滤镜选择栏——怀旧
+    @Bind(R.id.btn_filter_nostalgia)
+    Button btnFilterNostalgia;
+    // 滤镜选择栏——去色
+    @Bind(R.id.btn_filter_uncolor)
+    Button btnFilterUncolor;
+    // 滤镜选择栏——高饱和度
+    @Bind(R.id.btn_filter_high_saturation)
+    Button btnFilterHighSaturation;
+    // 滤镜选择栏——底片
+    @Bind(R.id.btn_filter_relief)
+    Button btnFilterRelief;
 
     // 增强的选择栏
     @Bind(R.id.ll_edit_power)
@@ -103,8 +127,10 @@ public class EditPicActivity extends BaseActivity {
     private float mDensity;
     // 编辑图片的路径
     private String imagePath;
-    // 保存当前图片的位图对象
+    // 保存当前图片的位图对象（原图）
     private Bitmap bitmap = null;
+    // 保存正在修改的位图图像（正在编辑中，若保存，则将其引用赋给原图）
+    private Bitmap editBitmap = null;
     // 是否放弃修改的标志
     private boolean isQuitUpdate = false;
 
@@ -155,8 +181,18 @@ public class EditPicActivity extends BaseActivity {
         btnPicEdit.setOnClickListener(buttonClickListener);
         btnPicShare.setOnClickListener(buttonClickListener);
         // 为图片编辑栏的按钮注册
-        btnFilter.setOnClickListener(buttonClickListener);
-        btnPower.setOnClickListener(buttonClickListener);
+        btnEditRomote.setOnClickListener(buttonClickListener);
+        btnEditFlag.setOnClickListener(buttonClickListener);
+        btnEditFilter.setOnClickListener(buttonClickListener);
+        btnEditPower.setOnClickListener(buttonClickListener);
+        // 为图片的滤镜选择栏按钮注册
+        btnFilterOld.setOnClickListener(buttonClickListener);
+        btnFilterGray.setOnClickListener(buttonClickListener);
+        btnFilterReversal.setOnClickListener(buttonClickListener);
+        btnFilterNostalgia.setOnClickListener(buttonClickListener);
+        btnFilterUncolor.setOnClickListener(buttonClickListener);
+        btnFilterHighSaturation.setOnClickListener(buttonClickListener);
+        btnFilterRelief.setOnClickListener(buttonClickListener);
     }
 
     /**
@@ -168,6 +204,9 @@ public class EditPicActivity extends BaseActivity {
         public void onClick(View v) {
             // 通过id判断点击的是哪个按钮
             switch (v.getId()) {
+                /**
+                 * 以下是操作栏
+                 */
                 // 点击的是编辑按钮
                 case R.id.btn_pic_edit:
                     // 开启动画，让操作栏消失，编辑栏显示
@@ -181,6 +220,9 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.btn_pic_share:
                     doPicShare();
                     break;
+                /**
+                 * 以下是应用栏
+                 */
                 // 点击的是应用栏的放弃
                 case R.id.btn_quit:
                     // 调用按下返回键的方法
@@ -190,11 +232,16 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.btn_save:
                     doPicSave();
                     break;
+                /**
+                 * 以下是编辑栏
+                 */
                 // 点击的是编辑栏的旋转
                 case R.id.btn_edit_romote:
+                    doRomote();
                     break;
                 // 点击的是编辑栏的旗帜
                 case R.id.btn_edit_flag:
+                    doFlag();
                     break;
                 // 点击的是编辑栏的滤镜
                 case R.id.btn_edit_filter:
@@ -207,9 +254,77 @@ public class EditPicActivity extends BaseActivity {
                 // 点击的是编辑栏的涂鸦
                 case R.id.btn_edit_graffiti:
                     break;
+                /**
+                 * 以下是滤镜选择
+                 */
+                // 点击的是滤镜选择——原图
+                case R.id.btn_filter_old:
+                    editBitmap = bitmap;
+                    imgEditingPic.setImageBitmap(editBitmap);
+                    break;
+                // 点击的是滤镜选择——灰度
+                case R.id.btn_filter_gray:
+                    editBitmap = ImageUtil.handleImage2FilterGray(bitmap);
+                    imgEditingPic.setImageBitmap(editBitmap);
+                    break;
+                // 点击的是滤镜选择——反转
+                case R.id.btn_filter_reversal:
+                    editBitmap = ImageUtil.handleImage2FilterReversal(bitmap);
+                    imgEditingPic.setImageBitmap(editBitmap);
+                     break;
+                // 点击的是滤镜选择——怀旧
+                case R.id.btn_filter_nostalgia:
+                    editBitmap = ImageUtil.handleImage2FilterNostalgia(bitmap);
+                    imgEditingPic.setImageBitmap(editBitmap);
+                    break;
+                // 点击的是滤镜选择——去色
+                case R.id.btn_filter_uncolor:
+                    editBitmap = ImageUtil.handleImage2FilterUncolor(bitmap);
+                    imgEditingPic.setImageBitmap(editBitmap);
+                    break;
+                // 点击的是滤镜选择——高饱和度
+                case R.id.btn_filter_high_saturation:
+                    editBitmap = ImageUtil.handleImage2FilterHighSaturation(bitmap);
+                    imgEditingPic.setImageBitmap(editBitmap);
+                    break;
+                // 点击的是滤镜选择——底片
+                case R.id.btn_filter_relief:
+                    editBitmap = ImageUtil.handleImage2FilterRelief(bitmap);
+                    imgEditingPic.setImageBitmap(editBitmap);
+                    break;
                 default:
                     break;
             }
+        }
+
+        /**
+         * 点击编辑栏的旋转后执行的方法
+         * 图片按中心逆时针旋转90度
+         */
+        private void doRomote() {
+            // 第一次使用
+            if (editBitmap == null) {
+                // 修改后的图片
+                // 设置旋转中心和旋转度数
+                editBitmap = ImageUtil.handleImage2Romote(bitmap, 90,
+                        bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+            } else {
+                // 不是第一次使用
+                editBitmap = ImageUtil.handleImage2Romote(editBitmap, 90,
+                        editBitmap.getWidth() / 2, editBitmap.getHeight() / 2);
+            }
+            imgEditingPic.setImageBitmap(editBitmap);
+        }
+
+        /**
+         * 点击编辑栏的旗帜后执行的方法
+         * 图片变成旗帜飞扬的效果
+         */
+        private void doFlag() {
+            // 修改后的图片
+            editBitmap = ImageUtil.handleImage2Flag(bitmap);
+            // 显示
+            imgEditingPic.setImageBitmap(editBitmap);
         }
 
         /**
@@ -275,16 +390,22 @@ public class EditPicActivity extends BaseActivity {
             FileOutputStream out = null;
             try {
                 out = new FileOutputStream(outputImage);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-                out.flush();
-                // 执行到这说明保存成功
-                // 退出编辑界面，显示操作栏,将保存按钮禁用
-                // 调用关闭源动画效果
-                AnimatorUtil.animateClose(llEditActions);
-                // 开启新动画
-                AnimatorUtil.animateOpen(llOptions, mHiddenViewMeasuredHeight);
-                // 关闭保存按钮的功能
-                btnSave.setEnabled(false);
+                if (editBitmap != null) {
+                    editBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    out.flush();
+                    // 执行到这说明保存成功
+                    // 退出编辑界面，显示操作栏,将保存按钮禁用
+                    // 调用关闭源动画效果
+                    AnimatorUtil.animateClose(llEditActions);
+                    // 开启新动画
+                    AnimatorUtil.animateOpen(llOptions, mHiddenViewMeasuredHeight);
+                    // 关闭自定义控件
+                    LinearLayoutUtil.hiddenAllLinearLayouts();
+                    // 关闭保存按钮的功能
+                    btnSave.setEnabled(false);
+                } else {
+                    ToastUtil.show(EditPicActivity.this,R.string.pic_save_no_update);
+                }
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -365,6 +486,9 @@ public class EditPicActivity extends BaseActivity {
                                 LinearLayoutUtil.hiddenAllLinearLayouts();
                                 // 关闭保存按钮的功能
                                 btnSave.setEnabled(false);
+                                // 显示原图
+                                imgEditingPic.setImageBitmap(bitmap);
+                                editBitmap = null;
                                 dialog.dismiss();
                             }
                         }

@@ -139,6 +139,16 @@
             android:layout_alignStart="@+id/ll_edit_actions"
             android:orientation="horizontal"
             android:visibility="gone">
+            <!-- 原图 -->
+            <Button
+                android:id="@+id/btn_filter_old"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_photo_24dp"
+                android:text="@string/button_filter_old"
+                android:textColor="@android:color/white" />
             <!-- 灰度 -->
             <Button
                 android:id="@+id/btn_filter_gray"
@@ -189,7 +199,7 @@
                 android:drawableTop="@drawable/ic_brightness_7_24dp"
                 android:text="@string/button_filter_high_saturation"
                 android:textColor="@android:color/white" />
-            <!-- 浮雕 -->
+            <!-- 底片 -->
             <Button
                 android:id="@+id/btn_filter_relief"
                 style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
