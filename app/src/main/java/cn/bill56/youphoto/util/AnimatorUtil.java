@@ -68,5 +68,4 @@ public class AnimatorUtil {
         animator.start();
     }
 
-
 }

@@ -21,4 +21,13 @@
     <string name="ok">OK</string>
     <string name="pic_share_error">The picture was not found.</string>
     <string name="pic_save_error">The picture saved fail.</string>
+    <string name="button_filter_gray">Gray</string>
+    <string name="button_filter_reversal">Reversal</string>
+    <string name="button_filter_nostalgia">Nostalgia</string>
+    <string name="button_filter_uncolor">Uncolor</string>
+    <string name="button_filter_high_saturation">High saturation</string>
+    <string name="button_filter_relief">Relief</string>
+    <string name="seekbar_color">Color</string>
+    <string name="seekbar_saturation">Saturation</string>
+    <string name="seekbar_light">Light</string>
 </resources>

@@ -38,13 +38,13 @@
 
                 <Button
                     android:id="@+id/btn_save"
-                    android:enabled="false"
                     style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:enabled="false"
                     android:text="@string/button_save" />
             </RelativeLayout>
 
@@ -60,10 +60,13 @@
 
         <ImageView
             android:id="@+id/img_editing_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_width="320dp"
+            android:layout_height="480dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp" />
 
+        <!-- 图片编辑栏 -->
         <LinearLayout
             android:id="@+id/ll_edit_actions"
             android:layout_width="match_parent"
@@ -126,6 +129,159 @@
 
         </LinearLayout>
 
+        <!-- 滤镜选择器 -->
+        <cn.bill56.youphoto.customview.EditSelectLinearLayout
+            android:id="@+id/ll_edit_filter"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_above="@+id/ll_edit_actions"
+            android:layout_alignLeft="@+id/ll_edit_actions"
+            android:layout_alignStart="@+id/ll_edit_actions"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <!-- 灰度 -->
+            <Button
+                android:id="@+id/btn_filter_gray"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_brightness_3_24dp"
+                android:text="@string/button_filter_gray"
+                android:textColor="@android:color/white" />
+            <!-- 反转 -->
+            <Button
+                android:id="@+id/btn_filter_reversal"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_flip_24dp"
+                android:text="@string/button_filter_reversal"
+                android:textColor="@android:color/white" />
+            <!-- 怀旧 -->
+            <Button
+                android:id="@+id/btn_filter_nostalgia"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_portrait_24dp"
+                android:text="@string/button_filter_nostalgia"
+                android:textColor="@android:color/white" />
+            <!-- 去色 -->
+            <Button
+                android:id="@+id/btn_filter_uncolor"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_colorize_24dp"
+                android:text="@string/button_filter_uncolor"
+                android:textColor="@android:color/white" />
+            <!-- 高饱和度 -->
+            <Button
+                android:id="@+id/btn_filter_high_saturation"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_brightness_7_24dp"
+                android:text="@string/button_filter_high_saturation"
+                android:textColor="@android:color/white" />
+            <!-- 浮雕 -->
+            <Button
+                android:id="@+id/btn_filter_relief"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_blur_on_24dp"
+                android:text="@string/button_filter_relief"
+                android:textColor="@android:color/white" />
+
+        </cn.bill56.youphoto.customview.EditSelectLinearLayout>
+
+        <cn.bill56.youphoto.customview.EditSelectLinearLayout
+            android:id="@+id/ll_edit_power"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_above="@+id/ll_edit_actions"
+            android:layout_alignLeft="@+id/ll_edit_actions"
+            android:layout_alignStart="@+id/ll_edit_actions"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:text="@string/seekbar_color"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"/>
+                <SeekBar
+                    android:id="@+id/seekBar_color"
+                    android:progress="50"
+                    android:progressTint="@android:color/white"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:text="@string/seekbar_saturation"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"/>
+                <SeekBar
+                    android:id="@+id/seekBar_saturation"
+                    android:progress="50"
+                    android:progressTint="@android:color/white"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:text="@string/seekbar_light"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"/>
+                <SeekBar
+                    android:contentDescription="@string/seekbar_light"
+                    android:id="@+id/seekBar_light"
+                    android:progress="50"
+                    android:progressTint="@android:color/white"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"/>
+            </LinearLayout>
+
+        </cn.bill56.youphoto.customview.EditSelectLinearLayout>
+
+        <!-- 图片操作栏 -->
         <LinearLayout
             android:id="@+id/ll_options"
             android:layout_width="match_parent"
@@ -155,7 +311,6 @@
                 android:text="@string/button_pic_share"
                 android:textColor="@android:color/white" />
         </LinearLayout>
-
 
     </RelativeLayout>
 

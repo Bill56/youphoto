@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,6 +24,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bill56.youphoto.R;
 import cn.bill56.youphoto.util.AnimatorUtil;
+import cn.bill56.youphoto.util.LinearLayoutUtil;
 import cn.bill56.youphoto.util.LogUtil;
 import cn.bill56.youphoto.util.TimeUtil;
 import cn.bill56.youphoto.util.ToastUtil;
@@ -65,12 +67,29 @@ public class EditPicActivity extends BaseActivity {
     // 图片编辑栏布局——旗帜
 
     // 图片编辑栏布局——滤镜
-
+    @Bind(R.id.btn_edit_filter)
+    Button btnFilter;
     // 图片编辑栏布局——增强
-
+    @Bind(R.id.btn_edit_power)
+    Button btnPower;
     // 图片编辑栏布局——涂鸦
 
+    // 滤镜选择栏
+    @Bind(R.id.ll_edit_filter)
+    LinearLayout llEditFilter;
 
+    // 增强的选择栏
+    @Bind(R.id.ll_edit_power)
+    LinearLayout llEditPower;
+    // 增强的选择栏——色调
+    @Bind(R.id.seekBar_color)
+    SeekBar seekBarColor;
+    // 增强的选择栏——饱和度
+    @Bind(R.id.seekBar_saturation)
+    SeekBar seekBarSaturation;
+    // 增强的选择栏——亮度
+    @Bind(R.id.seekBar_light)
+    SeekBar seekBarLight;
     // 正在编辑的图片
     @Bind(R.id.img_editing_pic)
     ImageView imgEditingPic;
@@ -86,6 +105,8 @@ public class EditPicActivity extends BaseActivity {
     private String imagePath;
     // 保存当前图片的位图对象
     private Bitmap bitmap = null;
+    // 是否放弃修改的标志
+    private boolean isQuitUpdate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +155,8 @@ public class EditPicActivity extends BaseActivity {
         btnPicEdit.setOnClickListener(buttonClickListener);
         btnPicShare.setOnClickListener(buttonClickListener);
         // 为图片编辑栏的按钮注册
-
+        btnFilter.setOnClickListener(buttonClickListener);
+        btnPower.setOnClickListener(buttonClickListener);
     }
 
     /**
@@ -168,8 +190,65 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.btn_save:
                     doPicSave();
                     break;
+                // 点击的是编辑栏的旋转
+                case R.id.btn_edit_romote:
+                    break;
+                // 点击的是编辑栏的旗帜
+                case R.id.btn_edit_flag:
+                    break;
+                // 点击的是编辑栏的滤镜
+                case R.id.btn_edit_filter:
+                    doFilterSelect();
+                    break;
+                // 点击的是编辑栏的增强
+                case R.id.btn_edit_power:
+                    doPowerSelect();
+                    break;
+                // 点击的是编辑栏的涂鸦
+                case R.id.btn_edit_graffiti:
+                    break;
                 default:
                     break;
+            }
+        }
+
+        /**
+         * 点击增强按钮后执行
+         * 显示增强选择栏的方法
+         */
+        private void doPowerSelect() {
+            // 如果没有显示则开启动画显示
+            if (llEditPower.getVisibility() == View.GONE) {
+                if (isQuitUpdate) {
+                    // 如果是放弃了修改，则将所有的seek置为初始状态
+                    seekBarColor.setProgress(50);
+                    seekBarSaturation.setProgress(50);
+                    seekBarLight.setProgress(50);
+                }
+                // 关闭其他已经显示的编辑选择栏
+                LinearLayoutUtil.hiddenAllLinearLayouts();
+                // 开启动画，显示滤镜选择栏
+                AnimatorUtil.animateOpen(llEditPower, mHiddenViewMeasuredHeight);
+            } else {
+                // 显示了则关闭动画显示
+                AnimatorUtil.animateClose(llEditPower);
+            }
+        }
+
+        /**
+         * 点击滤镜按钮后执行
+         * 显示滤镜选择栏的方法
+         */
+        private void doFilterSelect() {
+            // 如果没有显示则开启动画显示
+            if (llEditFilter.getVisibility() == View.GONE) {
+                // 关闭其他已经显示的编辑选择栏
+                LinearLayoutUtil.hiddenAllLinearLayouts();
+                // 开启动画，显示滤镜选择栏
+                AnimatorUtil.animateOpen(llEditFilter, mHiddenViewMeasuredHeight);
+            } else {
+                // 显示了则关闭动画显示
+                AnimatorUtil.animateClose(llEditFilter);
             }
         }
 
@@ -210,12 +289,12 @@ public class EditPicActivity extends BaseActivity {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
                 // 弹出提示框
-                ToastUtil.show(EditPicActivity.this,R.string.pic_share_error);
+                ToastUtil.show(EditPicActivity.this, R.string.pic_share_error);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
                 // 弹出提示框
-                ToastUtil.show(EditPicActivity.this,R.string.pic_save_error);
+                ToastUtil.show(EditPicActivity.this, R.string.pic_save_error);
             } finally {
                 // 关闭流
                 if (out != null) {
@@ -264,16 +343,26 @@ public class EditPicActivity extends BaseActivity {
             builder.setTitle(R.string.dialog_info_title)
                     .setCancelable(false)
                     .setMessage(R.string.dialog_info_quit_msg)
-                    .setNegativeButton(R.string.cancel, null)
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 将放弃修改改成false
+                            isQuitUpdate = false;
+                        }
+                    })
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            // 将放弃修改改成true
+                            isQuitUpdate = true;
                             // 当操作栏消失的时候
                             if (llOptions.getVisibility() == View.GONE) {
                                 // 调用关闭源动画效果
                                 AnimatorUtil.animateClose(llEditActions);
                                 // 开启新动画
                                 AnimatorUtil.animateOpen(llOptions, mHiddenViewMeasuredHeight);
+                                // 关闭自定义控件
+                                LinearLayoutUtil.hiddenAllLinearLayouts();
                                 // 关闭保存按钮的功能
                                 btnSave.setEnabled(false);
                                 dialog.dismiss();
