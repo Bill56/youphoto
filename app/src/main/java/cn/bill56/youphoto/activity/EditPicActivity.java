@@ -401,6 +401,8 @@ public class EditPicActivity extends BaseActivity {
                     AnimatorUtil.animateOpen(llOptions, mHiddenViewMeasuredHeight);
                     // 关闭自定义控件
                     LinearLayoutUtil.hiddenAllLinearLayouts();
+                    // 修改当前图片路径
+                    imagePath = outputImage.getAbsolutePath();
                     // 关闭保存按钮的功能
                     btnSave.setEnabled(false);
                 } else {
