@@ -77,6 +77,8 @@ public class EditPicActivity extends BaseActivity {
     @Bind(R.id.btn_edit_power)
     Button btnEditPower;
     // 图片编辑栏布局——涂鸦
+    @Bind(R.id.btn_edit_graffiti)
+    Button btnbGraffiti;
 
     // 滤镜选择栏
     @Bind(R.id.ll_edit_filter)
@@ -115,6 +117,17 @@ public class EditPicActivity extends BaseActivity {
     // 增强的选择栏——亮度
     @Bind(R.id.seekBar_light)
     SeekBar seekBarLight;
+
+    // 涂鸦画笔选择栏
+    @Bind(R.id.ll_edit_graffiti)
+    LinearLayout llEditGaffiti;
+    // 涂鸦画笔选择栏——seekbarsize
+    // 涂鸦画笔选择栏——白色
+    // 涂鸦画笔选择栏——红色
+    // 涂鸦画笔选择栏——绿色
+    // 涂鸦画笔选择栏——蓝色
+    // 涂鸦画笔选择栏——黄色
+
     // 正在编辑的图片
     @Bind(R.id.img_editing_pic)
     ImageView imgEditingPic;
@@ -188,6 +201,7 @@ public class EditPicActivity extends BaseActivity {
         btnEditFlag.setOnClickListener(buttonClickListener);
         btnEditFilter.setOnClickListener(buttonClickListener);
         btnEditPower.setOnClickListener(buttonClickListener);
+        btnbGraffiti.setOnClickListener(buttonClickListener);
         // 为图片的滤镜选择栏按钮注册
         btnFilterOld.setOnClickListener(buttonClickListener);
         btnFilterGray.setOnClickListener(buttonClickListener);
@@ -269,6 +283,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是编辑栏的涂鸦
                 case R.id.btn_edit_graffiti:
+                    doGraffiti();
                     break;
                 /**
                  * 以下是滤镜选择
@@ -389,6 +404,23 @@ public class EditPicActivity extends BaseActivity {
             } else {
                 // 显示了则关闭动画显示
                 AnimatorUtil.animateClose(llEditFilter);
+            }
+        }
+
+        /**
+         * 点击涂鸦后执行的方法
+         * 显示涂鸦的画笔颜色选择和粗细选择
+         */
+        private void doGraffiti() {
+            // 如果没有显示则开启动画显示
+            if (llEditGaffiti.getVisibility() == View.GONE) {
+                // 关闭其他已经显示的编辑选择栏
+                LinearLayoutUtil.hiddenAllLinearLayouts();
+                // 开启动画，显示滤镜选择栏
+                AnimatorUtil.animateOpen(llEditGaffiti, mHiddenViewMeasuredHeight);
+            } else {
+                // 显示了则关闭动画显示
+                AnimatorUtil.animateClose(llEditGaffiti);
             }
         }
 
@@ -553,20 +585,19 @@ public class EditPicActivity extends BaseActivity {
 
     /**
      * 自定义类：
-     * 当图片显示的控件的被触摸的时候的事件监听器
+     * 当图片显示的控件的被触摸的时候执行
      */
     class OnImgTouchListener implements View.OnTouchListener {
 
         /**
-         * 被触摸后执行
+         * 手指点击的时候执行
          *
          * @param v     事件源
          * @param event 事件对象
-         * @return true表示不需要返回给父视图
+         * @return true表示不需要返回给上层处理
          */
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-
             return true;
         }
     }

@@ -58,6 +58,14 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+<!--        <cn.bill56.youphoto.customview.EditImageSufaceView
+            android:id="@+id/img_editing_pic"
+            android:layout_width="320dp"
+            android:layout_height="480dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"/>-->
+        <!-- 显示图片 -->
         <ImageView
             android:id="@+id/img_editing_pic"
             android:layout_width="320dp"
@@ -291,6 +299,70 @@
                     android:layout_height="match_parent"
                     android:layout_weight="7"/>
             </LinearLayout>
+
+        </cn.bill56.youphoto.customview.EditSelectLinearLayout>
+
+        <!-- 涂鸦画笔选择器 -->
+        <cn.bill56.youphoto.customview.EditSelectLinearLayout
+            android:id="@+id/ll_edit_graffiti"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="80dp"
+            android:layout_above="@+id/ll_edit_actions"
+            android:layout_alignLeft="@+id/ll_edit_actions"
+            android:layout_alignStart="@+id/ll_edit_actions"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <SeekBar
+                android:contentDescription="@string/seekbar_pait_size"
+                android:id="@+id/seekBar_pait_size"
+                android:max="50"
+                android:progress="25"
+                android:thumbTint="@color/graffitiColorWhite"
+                android:progressTint="@android:color/white"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5"/>
+            <!-- 白色 -->
+            <ImageButton
+                android:id="@+id/btn_graffiti_white"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/graffitiColorWhite"/>
+            <!-- 红色 -->
+            <ImageButton
+                android:id="@+id/btn_graffiti_red"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/graffitiColorRed" />
+            <!-- 绿色 -->
+            <ImageButton
+                android:id="@+id/btn_graffiti_green"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/graffitiColorGreen" />
+            <!-- 蓝色 -->
+            <ImageButton
+                android:id="@+id/btn_graffiti_blue"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/graffitiColorBlue" />
+            <!-- 黄色 -->
+            <ImageButton
+                android:id="@+id/btn_graffiti_yellow"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/graffitiColorYellow" />
 
         </cn.bill56.youphoto.customview.EditSelectLinearLayout>
 

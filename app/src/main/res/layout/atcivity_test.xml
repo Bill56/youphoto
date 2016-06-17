@@ -22,6 +22,7 @@
             android:contentDescription="@string/seekbar_color"
             android:id="@+id/seekBar_color"
             android:progress="50"
+            android:thumbTint="@color/graffitiColorWhite"
             android:progressTint="@android:color/white"
             android:layout_width="0dp"
             android:layout_height="match_parent"
