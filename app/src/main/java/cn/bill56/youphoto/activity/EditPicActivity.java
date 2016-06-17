@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -98,7 +99,7 @@ public class EditPicActivity extends BaseActivity {
     // 滤镜选择栏——高饱和度
     @Bind(R.id.btn_filter_high_saturation)
     Button btnFilterHighSaturation;
-    // 滤镜选择栏——底片
+    // 滤镜选择栏——浮雕
     @Bind(R.id.btn_filter_relief)
     Button btnFilterRelief;
 
@@ -174,6 +175,8 @@ public class EditPicActivity extends BaseActivity {
     private void registerListener() {
         // 创建按钮点击事件监听器
         OnButtonClickListener buttonClickListener = new OnButtonClickListener();
+        // 创建seekbar改变事件监听器
+        OnSeekBarProgressChangedListener seekBarProgressChangedListener = new OnSeekBarProgressChangedListener();
         // 给工具栏的按钮注册
         btnQuit.setOnClickListener(buttonClickListener);
         btnSave.setOnClickListener(buttonClickListener);
@@ -193,13 +196,26 @@ public class EditPicActivity extends BaseActivity {
         btnFilterUncolor.setOnClickListener(buttonClickListener);
         btnFilterHighSaturation.setOnClickListener(buttonClickListener);
         btnFilterRelief.setOnClickListener(buttonClickListener);
+        // 为图片的增强拖动seekbar注册监听器
+        seekBarColor.setOnSeekBarChangeListener(seekBarProgressChangedListener);
+        seekBarSaturation.setOnSeekBarChangeListener(seekBarProgressChangedListener);
+        seekBarLight.setOnSeekBarChangeListener(seekBarProgressChangedListener);
+        // 添加图片的触摸事件监听器
+        OnImgTouchListener imgTouchListener = new OnImgTouchListener();
+        imgEditingPic.setOnTouchListener(imgTouchListener);
     }
 
     /**
-     * 自定义的按钮点击事件监听器
+     * 自定义类
+     * 按钮点击事件监听器
      */
     class OnButtonClickListener implements View.OnClickListener {
 
+        /**
+         * 重写的父类方法，当监听的按钮被点击后触发执行
+         *
+         * @param v 事件源
+         */
         @Override
         public void onClick(View v) {
             // 通过id判断点击的是哪个按钮
@@ -261,6 +277,10 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.btn_filter_old:
                     editBitmap = bitmap;
                     imgEditingPic.setImageBitmap(editBitmap);
+                    // 将增强效果还原
+                    seekBarColor.setProgress(127);
+                    seekBarSaturation.setProgress(127);
+                    seekBarLight.setProgress(127);
                     break;
                 // 点击的是滤镜选择——灰度
                 case R.id.btn_filter_gray:
@@ -271,7 +291,7 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.btn_filter_reversal:
                     editBitmap = ImageUtil.handleImage2FilterReversal(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
-                     break;
+                    break;
                 // 点击的是滤镜选择——怀旧
                 case R.id.btn_filter_nostalgia:
                     editBitmap = ImageUtil.handleImage2FilterNostalgia(bitmap);
@@ -287,7 +307,7 @@ public class EditPicActivity extends BaseActivity {
                     editBitmap = ImageUtil.handleImage2FilterHighSaturation(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
                     break;
-                // 点击的是滤镜选择——底片
+                // 点击的是滤镜选择——浮雕
                 case R.id.btn_filter_relief:
                     editBitmap = ImageUtil.handleImage2FilterRelief(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
@@ -321,8 +341,13 @@ public class EditPicActivity extends BaseActivity {
          * 图片变成旗帜飞扬的效果
          */
         private void doFlag() {
-            // 修改后的图片
-            editBitmap = ImageUtil.handleImage2Flag(bitmap);
+            // 第一次使用
+            if (editBitmap == null) {
+                // 修改后的图片
+                editBitmap = ImageUtil.handleImage2Flag(bitmap);
+            } else {
+                editBitmap = ImageUtil.handleImage2Flag(editBitmap);
+            }
             // 显示
             imgEditingPic.setImageBitmap(editBitmap);
         }
@@ -336,9 +361,9 @@ public class EditPicActivity extends BaseActivity {
             if (llEditPower.getVisibility() == View.GONE) {
                 if (isQuitUpdate) {
                     // 如果是放弃了修改，则将所有的seek置为初始状态
-                    seekBarColor.setProgress(50);
-                    seekBarSaturation.setProgress(50);
-                    seekBarLight.setProgress(50);
+                    seekBarColor.setProgress(127);
+                    seekBarSaturation.setProgress(127);
+                    seekBarLight.setProgress(127);
                 }
                 // 关闭其他已经显示的编辑选择栏
                 LinearLayoutUtil.hiddenAllLinearLayouts();
@@ -406,7 +431,7 @@ public class EditPicActivity extends BaseActivity {
                     // 关闭保存按钮的功能
                     btnSave.setEnabled(false);
                 } else {
-                    ToastUtil.show(EditPicActivity.this,R.string.pic_save_no_update);
+                    ToastUtil.show(EditPicActivity.this, R.string.pic_save_no_update);
                 }
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
@@ -451,6 +476,99 @@ public class EditPicActivity extends BaseActivity {
             startActivity(Intent.createChooser(intent, EditPicActivity.this.getTitle()));
         }
 
+    }
+
+    /**
+     * 自定义类：
+     * 当seekbar进度条拖动改变的时候的事件监听器
+     */
+    class OnSeekBarProgressChangedListener implements SeekBar.OnSeekBarChangeListener {
+
+        // 进度条的最大值
+        private final int MAX_VALUE = 255;
+        // 进度条的最小值
+        private final int MID_VALUE = 127;
+        // 保存色调，饱和度，亮度的值得成员变量
+        private float mHue, mStauration, mLum;
+
+        /**
+         * 当监听的seekbar的进度值被改变的时候触发执行
+         *
+         * @param seekBar  事件源
+         * @param progress 进度值
+         * @param fromUser 是否由用户改变
+         */
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            // 通过获取seekBar的Id来判断拖动的是哪个seekbar
+            switch (seekBar.getId()) {
+                // 拖动的是色调
+                case R.id.seekBar_color:
+                    mHue = (progress - MID_VALUE) * 1.0F / MID_VALUE * 180;
+                    break;
+                // 拖动的是饱和度
+                case R.id.seekBar_saturation:
+                    mStauration = progress * 1.0F / MID_VALUE;
+                    break;
+                // 拖动的是亮度
+                case R.id.seekBar_light:
+                    mLum = progress * 1.0F / MID_VALUE;
+                    break;
+                default:
+                    break;
+            }
+            // 改变图片的效果
+            // 第一次使用
+            if (editBitmap == null) {
+                // 改变原图
+                editBitmap = ImageUtil.handleImageEffect(bitmap, mHue, mStauration, mLum);
+            } else {
+                // 改变正在编辑的图片
+                editBitmap = ImageUtil.handleImageEffect(editBitmap, mHue, mStauration, mLum);
+            }
+            // 显示
+            imgEditingPic.setImageBitmap(editBitmap);
+        }
+
+        /**
+         * 当监听的seekbar开始滑动的时候执行
+         *
+         * @param seekBar 事件源
+         */
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        /**
+         * 当监听的seekbar停止滑动的时候执行
+         *
+         * @param seekBar 事件源
+         */
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    }
+
+    /**
+     * 自定义类：
+     * 当图片显示的控件的被触摸的时候的事件监听器
+     */
+    class OnImgTouchListener implements View.OnTouchListener {
+
+        /**
+         * 被触摸后执行
+         *
+         * @param v     事件源
+         * @param event 事件对象
+         * @return true表示不需要返回给父视图
+         */
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            return true;
+        }
     }
 
     /**

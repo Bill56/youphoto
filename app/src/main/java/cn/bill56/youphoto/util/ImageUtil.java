@@ -220,10 +220,10 @@ public class ImageUtil {
     }
 
     /**
-     * 将原图滤镜设为底片效果
+     * 将原图滤镜设为浮雕效果
      *
      * @param bm 原图
-     * @return 底片效果图
+     * @return 浮雕效果图
      */
     public static Bitmap handleImage2FilterRelief(Bitmap bm) {
         // 创建图片副本
@@ -231,24 +231,31 @@ public class ImageUtil {
         // 图片属性
         int width = bm.getWidth();
         int height = bm.getHeight();
-        int color;
-        // 三原色加透明度
-        int r, g, b, a;
+        // 前一个颜色的颜色合成值和当前颜色合成值
+        int color, color1;
+        // 三原色加透明度,rgb表示前一个像素点的，r1,g1,b1表示当前的像素点
+        int r, g, b, a, r1, g1, b1;
         int[] oldPx = new int[width * height];
         int[] newPx = new int[width * height];
         bm.getPixels(oldPx, 0, width, 0, 0, width, height);
         // 遍历像素点
-        for (int i = 0; i < width * height; i++) {
-            color = oldPx[i];
+        for (int i = 1; i < width * height; i++) {
+            // 前一个像素点
+            color = oldPx[i - 1];
             r = Color.red(color);
             g = Color.green(color);
             b = Color.blue(color);
             a = Color.alpha(color);
-            // 底片的算法
-            r = 255 - r;
-            g = 255 - g;
-            b = 255 - b;
-            // 超出结果的判断
+            // 当前像素点
+            color1 = oldPx[i];
+            r1 = Color.red(color1);
+            g1 = Color.green(color1);
+            b1 = Color.blue(color1);
+            // 浮雕的转换算法
+            r = (r - r1 + 127);
+            g = (g - g1 + 127);
+            b = (b - b1 + 127);
+            // 超出结果的判断处理
             if (r > 255) {
                 r = 255;
             } else if (r < 0) {
@@ -264,9 +271,58 @@ public class ImageUtil {
             } else if (b < 0) {
                 b = 0;
             }
+            // 赋给新的像素点矩阵
             newPx[i] = Color.argb(a, r, g, b);
         }
+        // 绘图
         bmp.setPixels(newPx, 0, width, 0, 0, width, height);
+        return bmp;
+    }
+
+    /**
+     * 改变位图的色调、饱和度和亮度
+     *
+     * @param bm         位图对象
+     * @param hue        色调
+     * @param saturation 饱和度
+     * @param lum        亮度
+     * @return 修改后的位图对象
+     */
+    public static Bitmap handleImageEffect(Bitmap bm,
+                                           float hue,
+                                           float saturation,
+                                           float lum) {
+        // 根据原图创建副本
+        Bitmap bmp = Bitmap.createBitmap(
+                bm.getWidth(), bm.getHeight(), Bitmap.Config.ARGB_8888);
+        // 以原图副本为背景创建画布对象
+        Canvas canvas = new Canvas(bmp);
+        // 创建绘制的画笔对象
+        Paint paint = new Paint();
+        // 创建色调颜色矩阵
+        ColorMatrix hueMatrix = new ColorMatrix();
+        // 设置其旋转值
+        hueMatrix.setRotate(0, hue);
+        hueMatrix.setRotate(1, hue);
+        hueMatrix.setRotate(2, hue);
+        // 创建饱和度颜色矩阵
+        ColorMatrix saturationMatrix = new ColorMatrix();
+        // 设置饱和度值
+        saturationMatrix.setSaturation(saturation);
+        // 创建亮度颜色矩阵
+        ColorMatrix lumMatrix = new ColorMatrix();
+        // 设置亮度值
+        lumMatrix.setScale(lum, lum, lum, 1);
+        // 创建图片的颜色矩阵
+        ColorMatrix imageMatrix = new ColorMatrix();
+        // 将色调、饱和度和亮度矩阵装入
+        imageMatrix.postConcat(hueMatrix);
+        imageMatrix.postConcat(saturationMatrix);
+        imageMatrix.postConcat(lumMatrix);
+        // 将颜色矩阵作为画笔调色板
+        paint.setColorFilter(new ColorMatrixColorFilter(imageMatrix));
+        // 绘图
+        canvas.drawBitmap(bm, 0, 0, paint);
         return bmp;
     }
 

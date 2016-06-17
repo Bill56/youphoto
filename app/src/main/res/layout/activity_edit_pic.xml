@@ -199,7 +199,7 @@
                 android:drawableTop="@drawable/ic_brightness_7_24dp"
                 android:text="@string/button_filter_high_saturation"
                 android:textColor="@android:color/white" />
-            <!-- 底片 -->
+            <!-- 浮雕 -->
             <Button
                 android:id="@+id/btn_filter_relief"
                 style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
@@ -237,7 +237,8 @@
                     android:layout_weight="3"/>
                 <SeekBar
                     android:id="@+id/seekBar_color"
-                    android:progress="50"
+                    android:max="255"
+                    android:progress="127"
                     android:progressTint="@android:color/white"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -259,7 +260,8 @@
                     android:layout_weight="3"/>
                 <SeekBar
                     android:id="@+id/seekBar_saturation"
-                    android:progress="50"
+                    android:max="255"
+                    android:progress="127"
                     android:progressTint="@android:color/white"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -282,7 +284,8 @@
                 <SeekBar
                     android:contentDescription="@string/seekbar_light"
                     android:id="@+id/seekBar_light"
-                    android:progress="50"
+                    android:max="255"
+                    android:progress="127"
                     android:progressTint="@android:color/white"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"

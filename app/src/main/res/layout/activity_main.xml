@@ -24,29 +24,36 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:background="@drawable/bg_main"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <Button
             android:id="@+id/btn_selpic"
-            android:layout_width="180dp"
+            android:layout_width="165dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/btn_selpic"
-            android:text="@string/activity_main_btn_selpic" />
+            android:text="@string/activity_main_btn_selpic"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/btn_takeaphoto"
+            android:layout_alignStart="@+id/btn_takeaphoto"
+            android:layout_marginTop="140dp" />
 
         <Button
             android:id="@+id/btn_takeaphoto"
-            android:layout_width="180dp"
+            android:layout_width="165dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:background="@drawable/btn_takephoto"
-            android:text="@string/activity_main_btn_takephoto" />
+            android:text="@string/activity_main_btn_takephoto"
+            android:layout_marginLeft="65dp"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="50dp"
+            android:layout_below="@+id/btn_selpic"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
