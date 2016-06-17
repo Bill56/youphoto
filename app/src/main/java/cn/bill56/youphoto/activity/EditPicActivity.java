@@ -1,9 +1,17 @@
 package cn.bill56.youphoto.activity;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,9 +20,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -122,11 +133,23 @@ public class EditPicActivity extends BaseActivity {
     @Bind(R.id.ll_edit_graffiti)
     LinearLayout llEditGaffiti;
     // 涂鸦画笔选择栏——seekbarsize
+    @Bind(R.id.seekBar_pait_size)
+    SeekBar seekBarPaitSize;
     // 涂鸦画笔选择栏——白色
+    @Bind(R.id.btn_graffiti_white)
+    ImageButton btnPaitWhite;
     // 涂鸦画笔选择栏——红色
+    @Bind(R.id.btn_graffiti_red)
+    ImageButton btnPaitRed;
     // 涂鸦画笔选择栏——绿色
+    @Bind(R.id.btn_graffiti_green)
+    ImageButton btnPaitGreen;
     // 涂鸦画笔选择栏——蓝色
+    @Bind(R.id.btn_graffiti_blue)
+    ImageButton btnPaitBlue;
     // 涂鸦画笔选择栏——黄色
+    @Bind(R.id.btn_graffiti_yellow)
+    ImageButton btnPaitYellow;
 
     // 正在编辑的图片
     @Bind(R.id.img_editing_pic)
@@ -145,8 +168,19 @@ public class EditPicActivity extends BaseActivity {
     private Bitmap bitmap = null;
     // 保存正在修改的位图图像（正在编辑中，若保存，则将其引用赋给原图）
     private Bitmap editBitmap = null;
+    // 涂鸦的位图
+    private Bitmap panel;
     // 是否放弃修改的标志
     private boolean isQuitUpdate = false;
+    // 是否在涂鸦的标志
+    private boolean mIsDrawing = false;
+
+    /**
+     * 监听器对象
+     */
+    private OnButtonClickListener buttonClickListener;
+    private OnSeekBarProgressChangedListener seekBarProgressChangedListener;
+    private OnImgTouchListener imgTouchListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,9 +221,9 @@ public class EditPicActivity extends BaseActivity {
      */
     private void registerListener() {
         // 创建按钮点击事件监听器
-        OnButtonClickListener buttonClickListener = new OnButtonClickListener();
+        buttonClickListener = new OnButtonClickListener();
         // 创建seekbar改变事件监听器
-        OnSeekBarProgressChangedListener seekBarProgressChangedListener = new OnSeekBarProgressChangedListener();
+        seekBarProgressChangedListener = new OnSeekBarProgressChangedListener();
         // 给工具栏的按钮注册
         btnQuit.setOnClickListener(buttonClickListener);
         btnSave.setOnClickListener(buttonClickListener);
@@ -214,8 +248,15 @@ public class EditPicActivity extends BaseActivity {
         seekBarColor.setOnSeekBarChangeListener(seekBarProgressChangedListener);
         seekBarSaturation.setOnSeekBarChangeListener(seekBarProgressChangedListener);
         seekBarLight.setOnSeekBarChangeListener(seekBarProgressChangedListener);
+        // 为涂鸦的颜色选择和画笔粗细选择监听器
+        btnPaitWhite.setOnClickListener(buttonClickListener);
+        btnPaitRed.setOnClickListener(buttonClickListener);
+        btnPaitGreen.setOnClickListener(buttonClickListener);
+        btnPaitBlue.setOnClickListener(buttonClickListener);
+        btnPaitYellow.setOnClickListener(buttonClickListener);
+        seekBarPaitSize.setOnSeekBarChangeListener(seekBarProgressChangedListener);
         // 添加图片的触摸事件监听器
-        OnImgTouchListener imgTouchListener = new OnImgTouchListener();
+        imgTouchListener = new OnImgTouchListener();
         imgEditingPic.setOnTouchListener(imgTouchListener);
     }
 
@@ -230,6 +271,7 @@ public class EditPicActivity extends BaseActivity {
          *
          * @param v 事件源
          */
+        @SuppressLint("NewApi")
         @Override
         public void onClick(View v) {
             // 通过id判断点击的是哪个按钮
@@ -296,36 +338,79 @@ public class EditPicActivity extends BaseActivity {
                     seekBarColor.setProgress(127);
                     seekBarSaturation.setProgress(127);
                     seekBarLight.setProgress(127);
+                    // 赋空涂鸦
+                    panel = null;
                     break;
                 // 点击的是滤镜选择——灰度
                 case R.id.btn_filter_gray:
                     editBitmap = ImageUtil.handleImage2FilterGray(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
+                    // 赋空涂鸦
+                    panel = null;
                     break;
                 // 点击的是滤镜选择——反转
                 case R.id.btn_filter_reversal:
                     editBitmap = ImageUtil.handleImage2FilterReversal(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
+                    // 赋空涂鸦
+                    panel = null;
                     break;
                 // 点击的是滤镜选择——怀旧
                 case R.id.btn_filter_nostalgia:
                     editBitmap = ImageUtil.handleImage2FilterNostalgia(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
+                    // 赋空涂鸦
+                    panel = null;
                     break;
                 // 点击的是滤镜选择——去色
                 case R.id.btn_filter_uncolor:
                     editBitmap = ImageUtil.handleImage2FilterUncolor(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
+                    // 赋空涂鸦
+                    panel = null;
                     break;
                 // 点击的是滤镜选择——高饱和度
                 case R.id.btn_filter_high_saturation:
                     editBitmap = ImageUtil.handleImage2FilterHighSaturation(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
+                    // 赋空涂鸦
+                    panel = null;
                     break;
                 // 点击的是滤镜选择——浮雕
                 case R.id.btn_filter_relief:
                     editBitmap = ImageUtil.handleImage2FilterRelief(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
+                    // 赋空涂鸦
+                    panel = null;
+                    break;
+                /**
+                 * 以下是涂鸦的画笔选择
+                 */
+                // 点击的是白色
+                case R.id.btn_graffiti_white:
+                    // 设置画笔颜色
+                    imgTouchListener.paint.setColor(Color.WHITE);
+                    
+                    break;
+                // 点击的是红色
+                case R.id.btn_graffiti_red:
+                    // 设置画笔颜色
+                    imgTouchListener.paint.setColor(Color.RED);
+                    break;
+                // 点击的是绿色
+                case R.id.btn_graffiti_green:
+                    // 设置画笔颜色
+                    imgTouchListener.paint.setColor(Color.GREEN);
+                    break;
+                // 点击的是蓝色
+                case R.id.btn_graffiti_blue:
+                    // 设置画笔颜色
+                    imgTouchListener.paint.setColor(Color.BLUE);
+                    break;
+                // 点击的是黄色
+                case R.id.btn_graffiti_yellow:
+                    // 设置画笔颜色
+                    imgTouchListener.paint.setColor(Color.YELLOW);
                     break;
                 default:
                     break;
@@ -349,6 +434,8 @@ public class EditPicActivity extends BaseActivity {
                         editBitmap.getWidth() / 2, editBitmap.getHeight() / 2);
             }
             imgEditingPic.setImageBitmap(editBitmap);
+            // 关闭涂鸦画笔
+            mIsDrawing = false;
         }
 
         /**
@@ -365,6 +452,8 @@ public class EditPicActivity extends BaseActivity {
             }
             // 显示
             imgEditingPic.setImageBitmap(editBitmap);
+            // 关闭涂鸦画笔
+            mIsDrawing = false;
         }
 
         /**
@@ -388,6 +477,8 @@ public class EditPicActivity extends BaseActivity {
                 // 显示了则关闭动画显示
                 AnimatorUtil.animateClose(llEditPower);
             }
+            // 关闭涂鸦画笔
+            mIsDrawing = false;
         }
 
         /**
@@ -405,6 +496,8 @@ public class EditPicActivity extends BaseActivity {
                 // 显示了则关闭动画显示
                 AnimatorUtil.animateClose(llEditFilter);
             }
+            // 关闭涂鸦画笔
+            mIsDrawing = false;
         }
 
         /**
@@ -418,9 +511,12 @@ public class EditPicActivity extends BaseActivity {
                 LinearLayoutUtil.hiddenAllLinearLayouts();
                 // 开启动画，显示滤镜选择栏
                 AnimatorUtil.animateOpen(llEditGaffiti, mHiddenViewMeasuredHeight);
+                // 启动涂鸦画板的画笔
+                mIsDrawing = true;
             } else {
                 // 显示了则关闭动画显示
                 AnimatorUtil.animateClose(llEditGaffiti);
+                mIsDrawing = false;
             }
         }
 
@@ -462,6 +558,8 @@ public class EditPicActivity extends BaseActivity {
                     imagePath = outputImage.getAbsolutePath();
                     // 关闭保存按钮的功能
                     btnSave.setEnabled(false);
+                    // 关闭涂鸦画笔
+                    mIsDrawing = false;
                 } else {
                     ToastUtil.show(EditPicActivity.this, R.string.pic_save_no_update);
                 }
@@ -546,20 +644,27 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.seekBar_light:
                     mLum = progress * 1.0F / MID_VALUE;
                     break;
+                // 拖动的画笔粗细
+                case R.id.seekBar_pait_size:
+                    imgTouchListener.paint.setStrokeWidth(progress);
+                    break;
                 default:
                     break;
             }
-            // 改变图片的效果
-            // 第一次使用
-            if (editBitmap == null) {
-                // 改变原图
-                editBitmap = ImageUtil.handleImageEffect(bitmap, mHue, mStauration, mLum);
-            } else {
-                // 改变正在编辑的图片
-                editBitmap = ImageUtil.handleImageEffect(editBitmap, mHue, mStauration, mLum);
+            // 当选择的seekBar不是画笔粗细的时候
+            if (seekBar.getId() != R.id.seekBar_pait_size) {
+                // 改变图片的效果
+                // 第一次使用
+                if (editBitmap == null) {
+                    // 改变原图
+                    editBitmap = ImageUtil.handleImageEffect(bitmap, mHue, mStauration, mLum);
+                } else {
+                    // 改变正在编辑的图片
+                    editBitmap = ImageUtil.handleImageEffect(editBitmap, mHue, mStauration, mLum);
+                }
+                // 显示
+                imgEditingPic.setImageBitmap(editBitmap);
             }
-            // 显示
-            imgEditingPic.setImageBitmap(editBitmap);
         }
 
         /**
@@ -589,6 +694,15 @@ public class EditPicActivity extends BaseActivity {
      */
     class OnImgTouchListener implements View.OnTouchListener {
 
+        // 涂鸦的画布
+        private Canvas canvas;
+        // 涂鸦的画笔
+        Paint paint = new Paint();
+        // 记录按下的坐标的x值
+        private float downX;
+        // 记录按下的坐标的y值
+        private float downY;
+
         /**
          * 手指点击的时候执行
          *
@@ -598,8 +712,63 @@ public class EditPicActivity extends BaseActivity {
          */
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            // 当涂鸦工具启用的时候
+            if (mIsDrawing) {
+                switch (event.getAction()) {
+                    //按下触发
+                    case MotionEvent.ACTION_DOWN:
+                        LogUtil.d(LogUtil.TAG, "按下");
+                        initPanel();
+                        downX = event.getX();
+                        downY = event.getY();
+                        break;
+                    //移动触发
+                    case MotionEvent.ACTION_MOVE:
+                        LogUtil.d(LogUtil.TAG, "移动");
+                        float moveX = event.getX();
+                        float moveY = event.getY();
+                        canvas.drawLine(downX, downY, moveX, moveY, paint);
+                        imgEditingPic.setImageBitmap(editBitmap);
+                        downX = moveX;
+                        downY = moveY;
+                        break;
+                    //松开触发
+                    case MotionEvent.ACTION_UP:
+                        LogUtil.d(LogUtil.TAG, "松开");
+                        break;
+                    default:
+                        break;
+                }
+            }
             return true;
         }
+
+        /**
+         * 初始化涂鸦画板
+         */
+        private void initPanel() {
+            if (panel == null) {
+                //画纸
+                panel = Bitmap.createBitmap(imgEditingPic.getWidth(), // 涂鸦的宽度
+                        imgEditingPic.getHeight(),  // 涂鸦的高度
+                        Bitmap.Config.ARGB_8888);   // 涂鸦的调色板
+                canvas = new Canvas(panel);
+                //指定颜色
+                paint.setColor(Color.WHITE);
+                //指定宽度
+                paint.setStrokeWidth(25);
+                RectF rectF = new RectF(0, 0, imgEditingPic.getWidth(), imgEditingPic.getHeight());
+                if (editBitmap == null) {
+                    canvas.drawBitmap(bitmap, null, rectF, null);
+                } else {
+                    canvas.drawBitmap(editBitmap, null, rectF, null);
+                }
+                // 将创建好的画布给editBitmap;
+                editBitmap = panel;
+                imgEditingPic.setImageBitmap(editBitmap);
+            }
+        }
+
     }
 
     /**
@@ -640,6 +809,8 @@ public class EditPicActivity extends BaseActivity {
                                 // 显示原图
                                 imgEditingPic.setImageBitmap(bitmap);
                                 editBitmap = null;
+                                // 关闭涂鸦画笔
+                                mIsDrawing = false;
                                 dialog.dismiss();
                             }
                         }

@@ -304,6 +304,8 @@
 
         <!-- 涂鸦画笔选择器 -->
         <cn.bill56.youphoto.customview.EditSelectLinearLayout
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:id="@+id/ll_edit_graffiti"
             android:layout_width="match_parent"
             android:gravity="center_vertical"
