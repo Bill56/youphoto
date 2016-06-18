@@ -390,7 +390,7 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.btn_graffiti_white:
                     // 设置画笔颜色
                     imgTouchListener.paint.setColor(Color.WHITE);
-                    
+
                     break;
                 // 点击的是红色
                 case R.id.btn_graffiti_red:
@@ -436,6 +436,8 @@ public class EditPicActivity extends BaseActivity {
             imgEditingPic.setImageBitmap(editBitmap);
             // 关闭涂鸦画笔
             mIsDrawing = false;
+            // 赋空涂鸦
+            panel = null;
         }
 
         /**
@@ -454,6 +456,8 @@ public class EditPicActivity extends BaseActivity {
             imgEditingPic.setImageBitmap(editBitmap);
             // 关闭涂鸦画笔
             mIsDrawing = false;
+            // 赋空涂鸦
+            panel = null;
         }
 
         /**
@@ -664,6 +668,8 @@ public class EditPicActivity extends BaseActivity {
                 }
                 // 显示
                 imgEditingPic.setImageBitmap(editBitmap);
+                // 赋空涂鸦
+                panel = null;
             }
         }
 
