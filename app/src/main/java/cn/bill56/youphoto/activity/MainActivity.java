@@ -90,7 +90,8 @@ public class MainActivity extends BaseActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.back, menu);
+        // 加载主页面的选项菜单
+        getMenuInflater().inflate(R.menu.main_option, menu);
         return true;
     }
 
@@ -107,6 +108,12 @@ public class MainActivity extends BaseActivity {
             // 点击的是向上按钮，将其功能改成返回键
             case android.R.id.home:
                 onBackPressed();
+                break;
+            // 点击的是显示图片作品的菜单项
+            case R.id.action_show_pictures:
+                // 开启活动
+                Intent picIntent = new Intent(this,PicturesActivity.class);
+                startActivity(picIntent);
                 break;
             default:
                 break;

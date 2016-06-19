@@ -33,4 +33,7 @@
     <string name="button_filter_old">Old</string>
     <string name="pic_save_no_update">Picture was not updated.</string>
     <string name="seekbar_pait_size">Size</string>
+    <string name="activity_main_option_my_works">MyWorks</string>
+    <string name="activity_pictures_title">MyWorks</string>
+    <string name="activity_pictures_option_layout">Layout</string>
 </resources>
