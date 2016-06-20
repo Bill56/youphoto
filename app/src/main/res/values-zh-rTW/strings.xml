@@ -41,4 +41,7 @@
     <string name="card_picture_file_size">文件大小</string>
     <string name="activity_pictures_list_empty">您還沒有圖片作品哦</string>
     <string name="activity_pictures_list_empty_hint">快去編輯一張吧</string>
+    <string name="activity_pictures_context_remove">刪除</string>
+    <string name="activity_pictures_selected">被選中</string>
+    <string name="activity_pictures_remove_error">刪除失敗</string>
 </resources>

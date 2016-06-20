@@ -139,11 +139,15 @@ public class PicturesActivity extends BaseActivity {
                 }
             });
         } else {
-            // 隐藏列表视图
-            recyclerViewPictures.setVisibility(View.GONE);
-            // 显示图片不存在的视图
-            llFileListEmpty.setVisibility(View.VISIBLE);
+            showLayoutWhenDataEmpty();
         }
+    }
+
+    public void showLayoutWhenDataEmpty() {
+        // 隐藏列表视图
+        recyclerViewPictures.setVisibility(View.GONE);
+        // 显示图片不存在的视图
+        llFileListEmpty.setVisibility(View.VISIBLE);
     }
 
     /**

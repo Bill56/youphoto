@@ -125,6 +125,11 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
             mData.remove(file);
             // 通知适配器
             notifyDataSetChanged();
+            // 判断数据长度
+            if (mData == null || mData.size() == 0) {
+                // 如果数据的长度为0，则调用活动中显示列表为空的布局
+                PicturesActivity.instance.showLayoutWhenDataEmpty();
+            }
         } else {
             // 提示用户删除失败
             ToastUtil.show(mContext, R.string.activity_pictures_remove_error);
