@@ -36,4 +36,6 @@
     <string name="activity_main_option_my_works">MyWorks</string>
     <string name="activity_pictures_title">MyWorks</string>
     <string name="activity_pictures_option_layout">Layout</string>
+    <string name="card_picture_file_name">FileName</string>
+    <string name="card_picture_file_size">FileSize</string>
 </resources>

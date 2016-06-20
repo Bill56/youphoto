@@ -36,4 +36,7 @@
     <string name="seekbar_pait_size">大小</string>
     <string name="activity_main_option_my_works">我的作品</string>
     <string name="activity_pictures_title">我的作品</string>
+    <string name="activity_pictures_option_layout">布局</string>
+    <string name="card_picture_file_name">文件名称</string>
+    <string name="card_picture_file_size">文件大小</string>
 </resources>
