@@ -39,4 +39,6 @@
     <string name="activity_pictures_option_layout">布局</string>
     <string name="card_picture_file_name">文件名称</string>
     <string name="card_picture_file_size">文件大小</string>
+    <string name="activity_pictures_list_empty">您还没有图片作品哦</string>
+    <string name="activity_pictures_list_empty_hint">快去编辑一张吧</string>
 </resources>
