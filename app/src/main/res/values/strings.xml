@@ -40,4 +40,7 @@
     <string name="card_picture_file_size">FileSize</string>
     <string name="activity_pictures_list_empty">There are No Works</string>
     <string name="activity_pictures_list_empty_hint">Edit a picture at once.</string>
+    <string name="activity_pictures_context_remove">Remove</string>
+    <string name="activity_pictures_selected">was selected</string>
+    <string name="activity_pictures_remove_error">Remove Error.</string>
 </resources>

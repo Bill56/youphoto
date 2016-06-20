@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 系统自带颜色 -->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- 涂鸦的画笔颜色 -->
     <color name="graffitiColorWhite">#ffffff</color>
     <color name="graffitiColorRed">#ff0000</color>
     <color name="graffitiColorGreen">#00ff00</color>
     <color name="graffitiColorBlue">#0000ff</color>
     <color name="graffitiColorYellow">#ffff00</color>
+
+    <!-- 长按后出现的背景色 -->
+    <color name="btn_common_press_v21">#c7c7c7</color>
+    <color name="btn_common_press_v16">#d7d7d7</color>
+    <color name="white">#fff</color>
 </resources>

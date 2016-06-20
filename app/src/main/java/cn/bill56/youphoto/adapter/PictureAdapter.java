@@ -1,7 +1,9 @@
 package cn.bill56.youphoto.adapter;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
@@ -15,9 +17,12 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import cn.bill56.youphoto.R;
 import cn.bill56.youphoto.activity.EditPicActivity;
+import cn.bill56.youphoto.activity.PicturesActivity;
+import cn.bill56.youphoto.util.ToastUtil;
 
 /**
  * 跟显示图片的可回收视图绑定的适配器类
@@ -74,22 +79,26 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
      * @param position 位置
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         // 获得文件对象的引用
         File f = mData.get(position);
-        // 使用毕加索第三方包装载图片
-        Picasso.with(mContext)
-                .load(f.getAbsoluteFile())
-                .error(R.drawable.ic_image_24dp)
-                .into(holder.imgFileIcon);
-        // 绑定图片文件名
-        holder.textFileName.setText(f.getName());
-        // 绑定图片文件大小
-        // 将字节转成通用的计算机文件大小
-        String imgSize = Formatter.formatFileSize(mContext, f.length());
-        holder.textFileSize.setText(imgSize);
-        // 绑定文件路径
-        holder.textFilePath.setText(f.getAbsolutePath());
+        // 将文件与视图项进行绑定
+        holder.setData(f, position);
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(v, position);
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    onItemClickListener.onItemLongClick(v, position);
+                    return false;
+                }
+            });
+        }
     }
 
     /**
@@ -102,7 +111,36 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         return mData.size();
     }
 
+    /**
+     * 删除某一个文件
+     *
+     * @param file 待删除的文件对象
+     */
+    public void remove(File file) {
+        // 从磁盘删除
+        boolean result = file.delete();
+        // 删除成功，从内存中也删除
+        if (result) {
+            // 从列表删除
+            mData.remove(file);
+            // 通知适配器
+            notifyDataSetChanged();
+        } else {
+            // 提示用户删除失败
+            ToastUtil.show(mContext, R.string.activity_pictures_remove_error);
+        }
 
+    }
+
+    /**
+     * 获得文件对象
+     *
+     * @param pos 位置
+     * @return 文件对象
+     */
+    public File getItem(int pos) {
+        return mData.get(pos);
+    }
 
     /**
      * ViewHolder类，用于管理回收资源
@@ -132,21 +170,69 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
             textFileName = (TextView) itemView.findViewById(R.id.text_file_name);
             textFileSize = (TextView) itemView.findViewById(R.id.text_file_size);
             textFilePath = (TextView) itemView.findViewById(R.id.text_file_path);
-            itemView.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(mContext, "点击" + textFileName.getText(), Toast.LENGTH_SHORT).show();
-                            // 跳转到图片编辑界面
-                            Intent editPicIntent = new Intent(mContext, EditPicActivity.class);
-                            // 将被点击的图片路径存入
-                            editPicIntent.putExtra("EDIT_PIC",textFilePath.getText());
-                            mContext.startActivity(editPicIntent);
-                        }
-                    }
-            );
+        }
+
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+        public void setData(File item, int position) {
+            Set<Integer> positionSet = PicturesActivity.instance.positionSet;
+            if (positionSet.contains(position)) {
+                itemView.setBackground(PicturesActivity.instance.
+                        getResources().getDrawable(R.drawable.bg_selected));
+            } else {
+                itemView.setBackground(PicturesActivity.instance.
+                        getResources().getDrawable(R.drawable.btn_common));
+            }
+            // 绑定图片文件名
+            textFileName.setText(item.getName());
+            // 绑定图片文件大小
+            // 将字节转成通用的计算机文件大小
+            String imgSize = Formatter.formatFileSize(mContext, item.length());
+            textFileSize.setText(imgSize);
+            // 绑定文件路径
+            textFilePath.setText(item.getAbsolutePath());
+            // 使用毕加索第三方包装载图片
+            Picasso.with(mContext)
+                    // 装载的路径
+                    .load(item.getAbsoluteFile())
+                            // 装载出错时候的缩略图
+                    .error(R.drawable.ic_image_24dp)
+                            // 装载的目标视图对象
+                    .into(imgFileIcon);
         }
     }
 
+    /**
+     * 当每一项被点击的时候的回调接口
+     */
+    public interface OnItemClickListener {
+
+        /**
+         * 被点击的时候执行
+         *
+         * @param view     事件源
+         * @param position 位置
+         */
+        void onItemClick(View view, int position);
+
+        /**
+         * 长按的时候执行
+         *
+         * @param view     事件源
+         * @param position 位置
+         */
+        void onItemLongClick(View view, int position);
+    }
+
+    // 回调对象
+    private OnItemClickListener onItemClickListener;
+
+    /**
+     * 设置点击回调接口
+     *
+     * @param onItemClickListener 回调接口
+     */
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
 }
