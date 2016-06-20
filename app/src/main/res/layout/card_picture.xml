@@ -32,6 +32,8 @@
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@id/image_file_icon"
             android:layout_toRightOf="@id/image_file_icon"
+            android:ellipsize="marquee"
+            android:singleLine="true"
             android:text="@string/card_picture_file_name"
             android:textSize="16sp" />
 

@@ -2,11 +2,15 @@ package cn.bill56.youphoto.activity;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,12 +27,34 @@ public class PicturesActivity extends BaseActivity {
 
     // 工具栏
     private Toolbar toolbar;
+    // 线性布局，当word不存在的时候
+    private LinearLayout llFileListEmpty;
     // 列表视图
     private RecyclerView recyclerViewPictures;
     // 绑定的视图的适配器
     private PictureAdapter pictureAdapter;
     // 数据
     private List<File> imgFiles;
+    // 布局描述的数组列表
+    private RecyclerView.LayoutManager[] layoutManagers = {
+            // 线性布局，即列表
+            new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true),
+            // 网格布局，即一行显示两列
+            new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false),
+            // 瀑布流布局
+            new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+    };
+    // 布局菜单按钮的图标数组
+    private int[] layoutIcons = {
+            // 列表布局图标
+            R.drawable.ic_view_list_24dp,
+            // 网格布局图标
+            R.drawable.ic_view_module_24dp,
+            // 瀑布流布局图标
+            R.drawable.ic_view_quilt_24dp
+    };
+    // 当前选择的布局索引，以数组下标做索引值
+    private int selectedLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +74,8 @@ public class PicturesActivity extends BaseActivity {
         // 设置顶部返回键
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.activity_pictures_title);
+        // 绑定线性布局
+        llFileListEmpty = (LinearLayout) findViewById(R.id.ll_file_list_empt);
         // 绑定可回收列表视图
         recyclerViewPictures = (RecyclerView) findViewById(R.id.recyclerView_pictures);
         // 设置列表的布局管理器
@@ -57,12 +85,14 @@ public class PicturesActivity extends BaseActivity {
         // 图片文件夹存在，且有修改的图片
         if (imgFiles != null && imgFiles.size() > 0) {
             // 让适配器装载数据
-            pictureAdapter = new PictureAdapter(this,imgFiles);
+            pictureAdapter = new PictureAdapter(this, imgFiles);
             // 设置适配器
             recyclerViewPictures.setAdapter(pictureAdapter);
         } else {
+            // 隐藏列表视图
+            recyclerViewPictures.setVisibility(View.GONE);
             // 显示图片不存在的视图
-
+            llFileListEmpty.setVisibility(View.VISIBLE);
         }
 
     }
@@ -124,10 +154,34 @@ public class PicturesActivity extends BaseActivity {
             case android.R.id.home:
                 onBackPressed();
                 break;
+            // 点击的是布局切换菜单
+            case R.id.action_layout:
+                doLayoutSwitch(item);
+                break;
             default:
                 break;
         }
         return true;
+    }
+
+    /**
+     * 做布局切换的方法
+     *
+     * @param item 被点击的选项菜单
+     */
+    private void doLayoutSwitch(MenuItem item) {
+        // 判断当前的布局索引是否为数组的长度-1，其表示下一个索引应该修改为0
+        // 即进行循环切换
+        if (selectedLayout == layoutIcons.length-1) {
+            selectedLayout = 0;
+        } else {
+            // 否则下一个索引直接加1
+            selectedLayout++;
+        }
+        // 根据索引值，直接改变布局图标
+        item.setIcon(layoutIcons[selectedLayout]);
+        // 根据索引值，改变布局形式
+        recyclerViewPictures.setLayoutManager(layoutManagers[selectedLayout]);
     }
 
 }

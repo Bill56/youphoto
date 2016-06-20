@@ -38,4 +38,6 @@
     <string name="activity_pictures_option_layout">Layout</string>
     <string name="card_picture_file_name">FileName</string>
     <string name="card_picture_file_size">FileSize</string>
+    <string name="activity_pictures_list_empty">There are No Works</string>
+    <string name="activity_pictures_list_empty_hint">Edit a picture at once.</string>
 </resources>

@@ -3,6 +3,7 @@ package cn.bill56.youphoto.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +85,9 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         // 绑定图片文件名
         holder.textFileName.setText(f.getName());
         // 绑定图片文件大小
-        holder.textFileSize.setText(String.valueOf(f.length()));
+        // 将字节转成通用的计算机文件大小
+        String imgSize = Formatter.formatFileSize(mContext, f.length());
+        holder.textFileSize.setText(imgSize);
         // 绑定文件路径
         holder.textFilePath.setText(f.getAbsolutePath());
     }
