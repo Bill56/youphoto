@@ -58,13 +58,13 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-<!--        <cn.bill56.youphoto.customview.EditImageSufaceView
-            android:id="@+id/img_editing_pic"
-            android:layout_width="320dp"
-            android:layout_height="480dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"/>-->
+        <!--        <cn.bill56.youphoto.customview.EditImageSufaceView
+                    android:id="@+id/img_editing_pic"
+                    android:layout_width="320dp"
+                    android:layout_height="480dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"/>-->
         <!-- 显示图片 -->
         <ImageView
             android:id="@+id/img_editing_pic"
@@ -236,21 +236,22 @@
                 android:layout_weight="1">
 
                 <TextView
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:textSize="18sp"
-                    android:text="@string/seekbar_color"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"/>
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/seekbar_color"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+
                 <SeekBar
                     android:id="@+id/seekBar_color"
-                    android:max="255"
-                    android:progress="127"
-                    android:progressTint="@android:color/white"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="7"/>
+                    android:layout_weight="7"
+                    android:max="255"
+                    android:progress="127"
+                    android:progressTint="@android:color/white" />
             </LinearLayout>
 
             <LinearLayout
@@ -259,21 +260,22 @@
                 android:layout_weight="1">
 
                 <TextView
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:textSize="18sp"
-                    android:text="@string/seekbar_saturation"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"/>
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/seekbar_saturation"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+
                 <SeekBar
                     android:id="@+id/seekBar_saturation"
-                    android:max="255"
-                    android:progress="127"
-                    android:progressTint="@android:color/white"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="7"/>
+                    android:layout_weight="7"
+                    android:max="255"
+                    android:progress="127"
+                    android:progressTint="@android:color/white" />
             </LinearLayout>
 
             <LinearLayout
@@ -282,49 +284,81 @@
                 android:layout_weight="1">
 
                 <TextView
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:textSize="18sp"
-                    android:text="@string/seekbar_light"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"/>
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/seekbar_light"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+
                 <SeekBar
-                    android:contentDescription="@string/seekbar_light"
                     android:id="@+id/seekBar_light"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:contentDescription="@string/seekbar_light"
                     android:max="255"
                     android:progress="127"
-                    android:progressTint="@android:color/white"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="7"/>
+                    android:progressTint="@android:color/white" />
             </LinearLayout>
 
         </cn.bill56.youphoto.customview.EditSelectLinearLayout>
 
         <!-- 涂鸦画笔选择器 -->
         <cn.bill56.youphoto.customview.EditSelectLinearLayout
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:id="@+id/ll_edit_graffiti"
             android:layout_width="match_parent"
-            android:gravity="center_vertical"
             android:layout_height="80dp"
             android:layout_above="@+id/ll_edit_actions"
             android:layout_alignLeft="@+id/ll_edit_actions"
             android:layout_alignStart="@+id/ll_edit_actions"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:visibility="gone">
-            <SeekBar
-                android:contentDescription="@string/seekbar_pait_size"
-                android:id="@+id/seekBar_pait_size"
-                android:max="50"
-                android:progress="25"
-                android:thumbTint="@color/graffitiColorWhite"
-                android:progressTint="@android:color/white"
+            <!-- 承载滑块和撤销重做按钮的布局 -->
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="5"/>
+                android:layout_weight="5"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/imgBtn_undo"
+                        style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_undo_24dp" />
+
+                    <ImageButton
+                        android:id="@+id/imgBtn_redo"
+                        style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_redo_24dp" />
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seekBar_pait_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/seekbar_pait_size"
+                    android:max="50"
+                    android:progress="25"
+                    android:progressTint="@android:color/white"
+                    android:thumbTint="@color/graffitiColorWhite" />
+            </LinearLayout>
+
             <!-- 白色 -->
             <ImageButton
                 android:id="@+id/btn_graffiti_white"
@@ -332,7 +366,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/graffitiColorWhite"/>
+                android:background="@color/graffitiColorWhite" />
             <!-- 红色 -->
             <ImageButton
                 android:id="@+id/btn_graffiti_red"

@@ -31,10 +31,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bill56.youphoto.R;
+import cn.bill56.youphoto.customview.GraffitiLayer;
+import cn.bill56.youphoto.customview.Point;
 import cn.bill56.youphoto.util.AnimatorUtil;
 import cn.bill56.youphoto.util.ImageUtil;
 import cn.bill56.youphoto.util.LinearLayoutUtil;
@@ -150,6 +155,12 @@ public class EditPicActivity extends BaseActivity {
     // 涂鸦画笔选择栏——黄色
     @Bind(R.id.btn_graffiti_yellow)
     ImageButton btnPaitYellow;
+    // 涂鸦画笔选择栏——撤销
+    @Bind(R.id.imgBtn_undo)
+    ImageButton btnImgUndo;
+    // 涂鸦画笔选择栏——重做
+    @Bind(R.id.imgBtn_redo)
+    ImageButton btnImgRedo;
 
     // 正在编辑的图片
     @Bind(R.id.img_editing_pic)
@@ -174,6 +185,14 @@ public class EditPicActivity extends BaseActivity {
     private boolean isQuitUpdate = false;
     // 是否在涂鸦的标志
     private boolean mIsDrawing = false;
+
+    /**
+     * 涂鸦的图层栈
+     */
+    // 创建涂鸦图层栈
+    private Stack<GraffitiLayer> layers = new Stack<GraffitiLayer>();
+    // 创建保存出栈的图层
+    private Stack<GraffitiLayer> popLayers = new Stack<>();
 
     /**
      * 监听器对象
@@ -255,6 +274,9 @@ public class EditPicActivity extends BaseActivity {
         btnPaitBlue.setOnClickListener(buttonClickListener);
         btnPaitYellow.setOnClickListener(buttonClickListener);
         seekBarPaitSize.setOnSeekBarChangeListener(seekBarProgressChangedListener);
+        // 为涂鸦的撤销和重做注册监听器
+        btnImgUndo.setOnClickListener(buttonClickListener);
+        btnImgRedo.setOnClickListener(buttonClickListener);
         // 添加图片的触摸事件监听器
         imgTouchListener = new OnImgTouchListener();
         imgEditingPic.setOnTouchListener(imgTouchListener);
@@ -390,7 +412,6 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.btn_graffiti_white:
                     // 设置画笔颜色
                     imgTouchListener.paint.setColor(Color.WHITE);
-
                     break;
                 // 点击的是红色
                 case R.id.btn_graffiti_red:
@@ -411,6 +432,15 @@ public class EditPicActivity extends BaseActivity {
                 case R.id.btn_graffiti_yellow:
                     // 设置画笔颜色
                     imgTouchListener.paint.setColor(Color.YELLOW);
+                    break;
+                /**
+                 * 以下是涂鸦的撤销和重做
+                 */
+                case R.id.imgBtn_undo:
+                    doImgUndo();
+                    break;
+                case R.id.imgBtn_redo:
+                    doImgRedo();
                     break;
                 default:
                     break;
@@ -522,6 +552,68 @@ public class EditPicActivity extends BaseActivity {
                 AnimatorUtil.animateClose(llEditGaffiti);
                 mIsDrawing = false;
             }
+        }
+
+        /**
+         * 点击涂鸦的撤销按钮后执行的方法
+         * 撤销最近的一次涂鸦
+         */
+        private void doImgUndo() {
+            // 当涂鸦的图层不为空且数量不为0的时候执行
+            if (layers != null && layers.size() > 0) {
+                // 将最近一个图层出栈
+                GraffitiLayer popGraffitiLayer = layers.pop();
+                // 将出栈元素放入出栈的图层栈
+                popLayers.push(popGraffitiLayer);
+                // 重绘涂鸦板
+                drawGraffitiLayer();
+            } else {
+                ToastUtil.show(EditPicActivity.this,R.string.editpic_toast_no_undo);
+            }
+        }
+
+        /**
+         * 点击涂鸦的重做按钮后执行的方法
+         * 将撤销的涂鸦重做回来
+         */
+        private void doImgRedo() {
+            // 当涂鸦的图层不为空且数量不为0的时候执行
+            if (popLayers != null && popLayers.size() > 0) {
+                // 获得最近一次撤销的涂鸦图层
+                GraffitiLayer recentPopLayer = popLayers.pop();
+                // 将获得的元素放入涂鸦图层栈
+                layers.push(recentPopLayer);
+                // 重绘涂鸦板
+                drawGraffitiLayer();
+            } else {
+                ToastUtil.show(EditPicActivity.this, R.string.editpic_toast_no_redo);
+            }
+        }
+
+        // 绘制涂鸦画板
+        private void drawGraffitiLayer() {
+            panel = null;
+            editBitmap = null;
+            imgTouchListener.initPanel();
+            // 遍历图层
+            for (int i = 0; i < layers.size(); i++) {
+                // 获得每个图层的点集
+                List<Point> layerPoints = layers.get(i).getmPoints();
+                // 获得每个图层的画笔对象
+                Paint layerPaint = layers.get(i).getmPait();
+                // 遍历点集，将前一个点作为后一个点的起始点进行涂鸦线绘制
+                for (int j = 1; j < layerPoints.size(); j++) {
+                    // 获得前一个点对象
+                    Point formerP = layerPoints.get(j - 1);
+                    // 获得当前点对象
+                    Point currentP = layerPoints.get(j);
+                    // 绘制涂鸦线
+                    imgTouchListener.canvas.drawLine(formerP.getX(), formerP.getY(),
+                            currentP.getX(), currentP.getY(),
+                            layerPaint);
+                }
+            }
+            imgEditingPic.setImageBitmap(editBitmap);
         }
 
         /**
@@ -701,13 +793,15 @@ public class EditPicActivity extends BaseActivity {
     class OnImgTouchListener implements View.OnTouchListener {
 
         // 涂鸦的画布
-        private Canvas canvas;
+        Canvas canvas;
         // 涂鸦的画笔
         Paint paint = new Paint();
         // 记录按下的坐标的x值
         private float downX;
         // 记录按下的坐标的y值
         private float downY;
+        // 点集对象
+        private List<Point> points = null;
 
         /**
          * 手指点击的时候执行
@@ -724,15 +818,24 @@ public class EditPicActivity extends BaseActivity {
                     //按下触发
                     case MotionEvent.ACTION_DOWN:
                         LogUtil.d(LogUtil.TAG, "按下");
+                        // 初始化画板
                         initPanel();
                         downX = event.getX();
                         downY = event.getY();
+                        // 记录下坐标值，并且封装到点对象
+                        Point startP = new Point(downX, downY);
+                        // 创建点集列表
+                        points = new ArrayList<Point>();
+                        // 将起点添加到列表
+                        points.add(startP);
                         break;
                     //移动触发
                     case MotionEvent.ACTION_MOVE:
                         LogUtil.d(LogUtil.TAG, "移动");
                         float moveX = event.getX();
                         float moveY = event.getY();
+                        // 将点添加到点集
+                        points.add(new Point(moveX, moveY));
                         canvas.drawLine(downX, downY, moveX, moveY, paint);
                         imgEditingPic.setImageBitmap(editBitmap);
                         downX = moveX;
@@ -741,18 +844,25 @@ public class EditPicActivity extends BaseActivity {
                     //松开触发
                     case MotionEvent.ACTION_UP:
                         LogUtil.d(LogUtil.TAG, "松开");
+                        // 拷贝画笔
+                        Paint curPait = new Paint(paint);
+                        // 将点集对象放到一次涂鸦图层对象中
+                        GraffitiLayer graffitiLayer = new GraffitiLayer(points, curPait);
+                        // 将图层对象入栈
+                        layers.push(graffitiLayer);
                         break;
                     default:
                         break;
                 }
             }
+            //false只触发按下  true全触发
             return true;
         }
 
         /**
          * 初始化涂鸦画板
          */
-        private void initPanel() {
+        public void initPanel() {
             if (panel == null) {
                 //画纸
                 panel = Bitmap.createBitmap(imgEditingPic.getWidth(), // 涂鸦的宽度
@@ -760,7 +870,7 @@ public class EditPicActivity extends BaseActivity {
                         Bitmap.Config.ARGB_8888);   // 涂鸦的调色板
                 canvas = new Canvas(panel);
                 //指定颜色
-                paint.setColor(Color.WHITE);
+//                paint.setColor(Color.WHITE);
                 //指定宽度
                 paint.setStrokeWidth(25);
                 RectF rectF = new RectF(0, 0, imgEditingPic.getWidth(), imgEditingPic.getHeight());

@@ -43,4 +43,6 @@
     <string name="activity_pictures_context_remove">Remove</string>
     <string name="activity_pictures_selected">was selected</string>
     <string name="activity_pictures_remove_error">Remove Error.</string>
+    <string name="editpic_toast_no_undo">Aready undo.</string>
+    <string name="editpic_toast_no_redo">Aready redo.</string>
 </resources>
