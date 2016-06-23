@@ -44,4 +44,6 @@
     <string name="activity_pictures_context_remove">删除</string>
     <string name="activity_pictures_selected">被选中</string>
     <string name="activity_pictures_remove_error">删除失败.</string>
+    <string name="editpic_toast_no_undo">撤销到初始状态了。</string>
+    <string name="editpic_toast_no_redo">恢复到最近状态了。</string>
 </resources>
