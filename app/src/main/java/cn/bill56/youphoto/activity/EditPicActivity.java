@@ -181,6 +181,8 @@ public class EditPicActivity extends BaseActivity {
     private Bitmap editBitmap = null;
     // 涂鸦的位图
     private Bitmap panel;
+    // 涂鸦前的位图
+    private Bitmap graffitiBmp;
     // 是否放弃修改的标志
     private boolean isQuitUpdate = false;
     // 是否在涂鸦的标志
@@ -362,6 +364,9 @@ public class EditPicActivity extends BaseActivity {
                     seekBarLight.setProgress(127);
                     // 赋空涂鸦
                     panel = null;
+                    // 清空涂鸦栈和涂鸦重作战
+                    layers.clear();
+                    popLayers.clear();
                     break;
                 // 点击的是滤镜选择——灰度
                 case R.id.btn_filter_gray:
@@ -369,6 +374,9 @@ public class EditPicActivity extends BaseActivity {
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
                     panel = null;
+                    // 清空涂鸦栈和涂鸦重作战
+                    layers.clear();
+                    popLayers.clear();
                     break;
                 // 点击的是滤镜选择——反转
                 case R.id.btn_filter_reversal:
@@ -376,6 +384,9 @@ public class EditPicActivity extends BaseActivity {
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
                     panel = null;
+                    // 清空涂鸦栈和涂鸦重作战
+                    layers.clear();
+                    popLayers.clear();
                     break;
                 // 点击的是滤镜选择——怀旧
                 case R.id.btn_filter_nostalgia:
@@ -383,6 +394,9 @@ public class EditPicActivity extends BaseActivity {
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
                     panel = null;
+                    // 清空涂鸦栈和涂鸦重作战
+                    layers.clear();
+                    popLayers.clear();
                     break;
                 // 点击的是滤镜选择——去色
                 case R.id.btn_filter_uncolor:
@@ -390,6 +404,9 @@ public class EditPicActivity extends BaseActivity {
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
                     panel = null;
+                    // 清空涂鸦栈和涂鸦重作战
+                    layers.clear();
+                    popLayers.clear();
                     break;
                 // 点击的是滤镜选择——高饱和度
                 case R.id.btn_filter_high_saturation:
@@ -397,6 +414,9 @@ public class EditPicActivity extends BaseActivity {
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
                     panel = null;
+                    // 清空涂鸦栈和涂鸦重作战
+                    layers.clear();
+                    popLayers.clear();
                     break;
                 // 点击的是滤镜选择——浮雕
                 case R.id.btn_filter_relief:
@@ -404,6 +424,9 @@ public class EditPicActivity extends BaseActivity {
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
                     panel = null;
+                    // 清空涂鸦栈和涂鸦重作战
+                    layers.clear();
+                    popLayers.clear();
                     break;
                 /**
                  * 以下是涂鸦的画笔选择
@@ -541,6 +564,12 @@ public class EditPicActivity extends BaseActivity {
         private void doGraffiti() {
             // 如果没有显示则开启动画显示
             if (llEditGaffiti.getVisibility() == View.GONE) {
+                // 将涂鸦前的位图进行保存
+                if (editBitmap == null) {
+                    graffitiBmp = Bitmap.createBitmap(bitmap);
+                } else {
+                    graffitiBmp = Bitmap.createBitmap(editBitmap);
+                }
                 // 关闭其他已经显示的编辑选择栏
                 LinearLayoutUtil.hiddenAllLinearLayouts();
                 // 开启动画，显示滤镜选择栏
@@ -593,7 +622,7 @@ public class EditPicActivity extends BaseActivity {
         // 绘制涂鸦画板
         private void drawGraffitiLayer() {
             panel = null;
-            editBitmap = null;
+            editBitmap = graffitiBmp;
             imgTouchListener.initPanel();
             // 遍历图层
             for (int i = 0; i < layers.size(); i++) {
@@ -656,6 +685,9 @@ public class EditPicActivity extends BaseActivity {
                     btnSave.setEnabled(false);
                     // 关闭涂鸦画笔
                     mIsDrawing = false;
+                    // 清空涂鸦栈和涂鸦重作战
+                    layers.clear();
+                    popLayers.clear();
                 } else {
                     ToastUtil.show(EditPicActivity.this, R.string.pic_save_no_update);
                 }
@@ -927,6 +959,9 @@ public class EditPicActivity extends BaseActivity {
                                 editBitmap = null;
                                 // 关闭涂鸦画笔
                                 mIsDrawing = false;
+                                // 清空涂鸦栈和涂鸦重作战
+                                layers.clear();
+                                popLayers.clear();
                                 dialog.dismiss();
                             }
                         }
