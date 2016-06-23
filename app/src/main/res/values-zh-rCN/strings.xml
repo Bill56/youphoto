@@ -46,4 +46,7 @@
     <string name="activity_pictures_remove_error">删除失败.</string>
     <string name="editpic_toast_no_undo">撤销到初始状态了。</string>
     <string name="editpic_toast_no_redo">恢复到最近状态了。</string>
+    <string name="dialog_layout_hint_text">需要保存当前显示的布局格式吗？</string>
+    <string name="dialog_layout_hint_checkbox">不再提示</string>
+    <string name="dialog_layout_hint_title">是否保存</string>
 </resources>

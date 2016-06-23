@@ -45,4 +45,7 @@
     <string name="activity_pictures_remove_error">Remove Error.</string>
     <string name="editpic_toast_no_undo">Aready undo.</string>
     <string name="editpic_toast_no_redo">Aready redo.</string>
+    <string name="dialog_layout_hint_text">Do you want to save the layout you select?</string>
+    <string name="dialog_layout_hint_checkbox">No hint.</string>
+    <string name="dialog_layout_hint_title">IsSave</string>
 </resources>
