@@ -1,9 +1,13 @@
 package cn.bill56.youphoto.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -71,6 +76,10 @@ public class PicturesActivity extends BaseActivity {
     public Set<Integer> positionSet = new HashSet<>();
     // 指向自身的实例
     public static PicturesActivity instance;
+    // 选项存储对象
+    private SharedPreferences preferences;
+    // 选项菜单对象
+    private MenuItem itemLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +109,12 @@ public class PicturesActivity extends BaseActivity {
         llFileListEmpty = (LinearLayout) findViewById(R.id.ll_file_list_empt);
         // 绑定可回收列表视图
         recyclerViewPictures = (RecyclerView) findViewById(R.id.recyclerView_pictures);
+        // 获得选项存储对象
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        // 从选项存储中获取布局索引值，默认为0，即线性布局
+        selectedLayout = preferences.getInt("SELECT_LAYOUT", 0);
         // 设置列表的布局管理器
-        recyclerViewPictures.setLayoutManager(layoutManagers[0]);
+        recyclerViewPictures.setLayoutManager(layoutManagers[selectedLayout]);
         // 获得数据列表
         getImageFiles();
         // 图片文件夹存在，且有修改的图片
@@ -188,6 +201,10 @@ public class PicturesActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // 加载菜单布局
         getMenuInflater().inflate(R.menu.pictures_option, menu);
+        // 获取布局菜单对象
+        itemLayout = menu.findItem(R.id.action_layout);
+        // 设置背景
+        itemLayout.setIcon(layoutIcons[selectedLayout]);
         return true;
     }
 
@@ -375,6 +392,63 @@ public class PicturesActivity extends BaseActivity {
             positionSet.clear();
             // 通知适配器
             pictureAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 按下返回键的时候执行
+     */
+    @Override
+    public void onBackPressed() {
+        // 从选项存储中获取用户是否需要询问
+        boolean isHint = preferences.getBoolean("IS_HINT", true);
+        // 获取选项存储的编辑器对象
+        final SharedPreferences.Editor editor = preferences.edit();
+        // 需要提醒，则弹出对话框询问用户是否保存当前布局
+        if (isHint) {
+            // 弹出对话框
+            // 创建构建器
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            // 查找视图
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_hint, null);
+            // 获取视图中的复选框
+            final CheckBox cbNoHint = (CheckBox) dialogView.findViewById(R.id.checkbox_no_hint);
+            // 设置标题和布局
+            builder.setTitle(R.string.dialog_layout_hint_title)
+                    .setView(dialogView);
+            // 设置对话框选择确定后执行的方法
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // 将选择存储选项存储
+                    editor.putBoolean("IS_HINT", !cbNoHint.isChecked());
+                    // 将当前选择布局也存储选项存储
+                    editor.putInt("SELECT_LAYOUT",selectedLayout);
+                    editor.commit();
+                    // 让对话框消失
+                    dialog.dismiss();
+                    // 销毁活动
+                    finish();
+                }
+            });
+            // 设置对话框选择取消后执行的方法
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    // 销毁活动
+                    finish();
+                }
+            });
+            // 创建对话框
+            AlertDialog dialog = builder.create();
+            // 显示出来
+            dialog.show();
+        } else {
+            // 否则直接保存当前布局索引到选项存储
+            editor.putInt("SELECT_LAYOUT", selectedLayout);
+            editor.commit();
+            super.onBackPressed();
         }
     }
 
