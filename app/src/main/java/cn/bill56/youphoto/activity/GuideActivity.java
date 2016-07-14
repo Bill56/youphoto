@@ -21,7 +21,6 @@ import cn.bill56.youphoto.adapter.GuideViewPagerAdapter;
  * 承载引导页的活动，当用户第一次安装使用该软件时会弹出引导页
  *
  * @author Bill56
- *
  */
 public class GuideActivity extends BaseActivity implements OnPageChangeListener {
 
@@ -34,12 +33,18 @@ public class GuideActivity extends BaseActivity implements OnPageChangeListener 
     // 承载导航点的数组
     private ImageView[] dots;
     // 承载导航点的id数组
-    private int[] ids = { R.id.image_p1, R.id.image_p2, R.id.image_p3 };
+    private int[] ids = {R.id.image_p1, R.id.image_p2, R.id.image_p3};
     // 进去界面的按钮
     private Button btnEnter;
 
+    /**
+     * 创建活动的时候回调
+     *
+     * @param savedInstanceState 保存实例的对象
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 回调父类
         super.onCreate(savedInstanceState);
         // 隐藏标题
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -55,6 +60,7 @@ public class GuideActivity extends BaseActivity implements OnPageChangeListener 
      * 初始化引导页的内容
      */
     private void initViews() {
+        // 创建加载布局的加载器对象
         LayoutInflater inflater = LayoutInflater.from(this);
         views = new ArrayList<View>();
         // 添加引导界面

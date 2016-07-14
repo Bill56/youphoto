@@ -12,21 +12,47 @@ import cn.bill56.youphoto.util.LinearLayoutUtil;
  */
 public class EditSelectLinearLayout extends LinearLayout {
 
+    /**
+     * 构造方法
+     *
+     * @param context 上下文环境
+     */
     public EditSelectLinearLayout(Context context) {
         super(context);
         LinearLayoutUtil.addLinearLayout(this);
     }
 
+    /**
+     * 构造放啊
+     *
+     * @param context 上下文环境
+     * @param attrs   属性对象
+     */
     public EditSelectLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         LinearLayoutUtil.addLinearLayout(this);
     }
 
+    /**
+     * 构造方法
+     *
+     * @param context      上下文环境
+     * @param attrs        属性对象
+     * @param defStyleAttr 样式属性
+     */
     public EditSelectLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         LinearLayoutUtil.addLinearLayout(this);
     }
 
+    /**
+     * 构造方法
+     *
+     * @param context      上下文环境
+     * @param attrs        属性对象
+     * @param defStyleAttr 样式属性
+     * @param defStyleRes  样式引用
+     */
     public EditSelectLinearLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         LinearLayoutUtil.addLinearLayout(this);

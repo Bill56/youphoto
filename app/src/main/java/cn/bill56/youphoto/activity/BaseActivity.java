@@ -18,6 +18,7 @@ public class BaseActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 回调父类
         super.onCreate(savedInstanceState);
         // 添加到活动管理类
         ActivityUtil.addActivity(this);
@@ -28,6 +29,7 @@ public class BaseActivity extends AppCompatActivity {
      */
     @Override
     protected void onDestroy() {
+        // 回调父类
         super.onDestroy();
         // 荣活动管理类移除
         ActivityUtil.removeActivity(this);

@@ -199,13 +199,23 @@ public class EditPicActivity extends BaseActivity {
     /**
      * 监听器对象
      */
+    // 按钮点击事件的监听器对象
     private OnButtonClickListener buttonClickListener;
+    // seekBar拖动改变的监听器对象
     private OnSeekBarProgressChangedListener seekBarProgressChangedListener;
+    // 图片视图触摸的监听器对象
     private OnImgTouchListener imgTouchListener;
 
+    /**
+     * 创建活动的回调方法
+     *
+     * @param savedInstanceState 保存实例的对象
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 回调父类
         super.onCreate(savedInstanceState);
+        // 加载xml文件的布局
         setContentView(R.layout.activity_edit_pic);
         // 初始化视图
         initview();
@@ -225,6 +235,7 @@ public class EditPicActivity extends BaseActivity {
         imgEditingPic = (ImageView) findViewById(R.id.img_editing_pic);
         // 获取传递过来的intent中的数据
         imagePath = getIntent().getStringExtra("EDIT_PIC");
+        // 将位图路径进行解码成位图对象
         bitmap = BitmapFactory.decodeFile(imagePath);
         // 显示需要编辑的图片
         imgEditingPic.setImageBitmap(bitmap);
@@ -314,6 +325,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是分享按钮
                 case R.id.btn_pic_share:
+                    // 执行分享图片的功能
                     doPicShare();
                     break;
                 /**
@@ -326,6 +338,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是应用栏的保存
                 case R.id.btn_save:
+                    // 执行保存图片的方法
                     doPicSave();
                     break;
                 /**
@@ -333,22 +346,27 @@ public class EditPicActivity extends BaseActivity {
                  */
                 // 点击的是编辑栏的旋转
                 case R.id.btn_edit_romote:
+                    // 执行旋转图片的方法
                     doRomote();
                     break;
                 // 点击的是编辑栏的旗帜
                 case R.id.btn_edit_flag:
+                    // 执行旗帜效果的方法
                     doFlag();
                     break;
                 // 点击的是编辑栏的滤镜
                 case R.id.btn_edit_filter:
+                    // 执行打开或关闭滤镜选择栏的方法
                     doFilterSelect();
                     break;
                 // 点击的是编辑栏的增强
                 case R.id.btn_edit_power:
+                    // 执行打开或关闭增选拖动栏的方法
                     doPowerSelect();
                     break;
                 // 点击的是编辑栏的涂鸦
                 case R.id.btn_edit_graffiti:
+                    // 执行打开或关闭涂鸦栏的方法
                     doGraffiti();
                     break;
                 /**
@@ -356,7 +374,9 @@ public class EditPicActivity extends BaseActivity {
                  */
                 // 点击的是滤镜选择——原图
                 case R.id.btn_filter_old:
+                    // 保存编辑前的原片
                     editBitmap = bitmap;
+                    // 将当前编辑图片的视图对象显示为原图
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 将增强效果还原
                     seekBarColor.setProgress(127);
@@ -370,6 +390,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是滤镜选择——灰度
                 case R.id.btn_filter_gray:
+                    // 调用之前写好的灰度效果滤镜方法
                     editBitmap = ImageUtil.handleImage2FilterGray(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
@@ -380,6 +401,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是滤镜选择——反转
                 case R.id.btn_filter_reversal:
+                    // 调用之前写好的反转效果滤镜方法
                     editBitmap = ImageUtil.handleImage2FilterReversal(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
@@ -390,6 +412,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是滤镜选择——怀旧
                 case R.id.btn_filter_nostalgia:
+                    // 调用之前写好的滤镜效果滤镜方法
                     editBitmap = ImageUtil.handleImage2FilterNostalgia(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
@@ -400,6 +423,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是滤镜选择——去色
                 case R.id.btn_filter_uncolor:
+                    // 调用之前写好的去色效果滤镜方法
                     editBitmap = ImageUtil.handleImage2FilterUncolor(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
@@ -410,6 +434,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是滤镜选择——高饱和度
                 case R.id.btn_filter_high_saturation:
+                    // 调用之前写好的高饱和度效果滤镜方法
                     editBitmap = ImageUtil.handleImage2FilterHighSaturation(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
@@ -420,6 +445,7 @@ public class EditPicActivity extends BaseActivity {
                     break;
                 // 点击的是滤镜选择——浮雕
                 case R.id.btn_filter_relief:
+                    // 调用之前写好的浮雕效果滤镜方法
                     editBitmap = ImageUtil.handleImage2FilterRelief(bitmap);
                     imgEditingPic.setImageBitmap(editBitmap);
                     // 赋空涂鸦
@@ -460,9 +486,11 @@ public class EditPicActivity extends BaseActivity {
                  * 以下是涂鸦的撤销和重做
                  */
                 case R.id.imgBtn_undo:
+                    // 执行图片涂鸦撤销的方法
                     doImgUndo();
                     break;
                 case R.id.imgBtn_redo:
+                    // 执行图片涂鸦重做的方法
                     doImgRedo();
                     break;
                 default:
@@ -486,6 +514,7 @@ public class EditPicActivity extends BaseActivity {
                 editBitmap = ImageUtil.handleImage2Romote(editBitmap, 90,
                         editBitmap.getWidth() / 2, editBitmap.getHeight() / 2);
             }
+            // 设置显示的位图对象
             imgEditingPic.setImageBitmap(editBitmap);
             // 关闭涂鸦画笔
             mIsDrawing = false;
@@ -503,6 +532,7 @@ public class EditPicActivity extends BaseActivity {
                 // 修改后的图片
                 editBitmap = ImageUtil.handleImage2Flag(bitmap);
             } else {
+                // 将正在编辑的图片覆盖原图的对象
                 editBitmap = ImageUtil.handleImage2Flag(editBitmap);
             }
             // 显示
@@ -597,7 +627,8 @@ public class EditPicActivity extends BaseActivity {
                 // 重绘涂鸦板
                 drawGraffitiLayer();
             } else {
-                ToastUtil.show(EditPicActivity.this,R.string.editpic_toast_no_undo);
+                // 提示用户撤销到底了
+                ToastUtil.show(EditPicActivity.this, R.string.editpic_toast_no_undo);
             }
         }
 
@@ -615,14 +646,18 @@ public class EditPicActivity extends BaseActivity {
                 // 重绘涂鸦板
                 drawGraffitiLayer();
             } else {
+                // 提示用户重做到顶了
                 ToastUtil.show(EditPicActivity.this, R.string.editpic_toast_no_redo);
             }
         }
 
         // 绘制涂鸦画板
         private void drawGraffitiLayer() {
+            // 赋空画板
             panel = null;
+            // 将涂鸦的图像赋给正在编辑的位图对象
             editBitmap = graffitiBmp;
+            // 初始化画板
             imgTouchListener.initPanel();
             // 遍历图层
             for (int i = 0; i < layers.size(); i++) {
@@ -669,7 +704,9 @@ public class EditPicActivity extends BaseActivity {
             try {
                 out = new FileOutputStream(outputImage);
                 if (editBitmap != null) {
+                    // 将内存中的位图对象输出为本地文件中的JPEG格式
                     editBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    // 清空缓冲区
                     out.flush();
                     // 执行到这说明保存成功
                     // 退出编辑界面，显示操作栏,将保存按钮禁用
@@ -689,17 +726,18 @@ public class EditPicActivity extends BaseActivity {
                     layers.clear();
                     popLayers.clear();
                 } else {
+                    // 提示用户并未编辑过图片
                     ToastUtil.show(EditPicActivity.this, R.string.pic_save_no_update);
                 }
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                // 弹出提示框
+                // 异常处理——弹出提示框
                 ToastUtil.show(EditPicActivity.this, R.string.pic_share_error);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                // 弹出提示框
+                // 异常处理——弹出提示框
                 ToastUtil.show(EditPicActivity.this, R.string.pic_save_error);
             } finally {
                 // 关闭流
@@ -717,6 +755,7 @@ public class EditPicActivity extends BaseActivity {
          * 图片分享的方法,发送分享广播，让所有可接收分享广播的应用接收，调用对应的接口
          */
         private void doPicShare() {
+            // 创建传递数据的Intent对象
             Intent intent = new Intent(Intent.ACTION_SEND);
             if (imagePath == null || imagePath.equals("")) {
                 // 提示图片不存在
@@ -730,6 +769,7 @@ public class EditPicActivity extends BaseActivity {
                     intent.putExtra(Intent.EXTRA_STREAM, u);
                 }
             }
+            // 设置该标志表示以singleTask的模式启动新的activity
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(Intent.createChooser(intent, EditPicActivity.this.getTitle()));
         }
@@ -864,12 +904,16 @@ public class EditPicActivity extends BaseActivity {
                     //移动触发
                     case MotionEvent.ACTION_MOVE:
                         LogUtil.d(LogUtil.TAG, "移动");
+                        // 记录移动时刻的x,y坐标值
                         float moveX = event.getX();
                         float moveY = event.getY();
                         // 将点添加到点集
                         points.add(new Point(moveX, moveY));
+                        // 通过两点画线
                         canvas.drawLine(downX, downY, moveX, moveY, paint);
+                        // 重绘位图对象
                         imgEditingPic.setImageBitmap(editBitmap);
+                        // 记录下当前的移动点，方便后期引用
                         downX = moveX;
                         downY = moveY;
                         break;
@@ -905,6 +949,7 @@ public class EditPicActivity extends BaseActivity {
 //                paint.setColor(Color.WHITE);
                 //指定宽度
                 paint.setStrokeWidth(25);
+                // 创建一个位图的外围矩形
                 RectF rectF = new RectF(0, 0, imgEditingPic.getWidth(), imgEditingPic.getHeight());
                 if (editBitmap == null) {
                     canvas.drawBitmap(bitmap, null, rectF, null);
@@ -913,6 +958,7 @@ public class EditPicActivity extends BaseActivity {
                 }
                 // 将创建好的画布给editBitmap;
                 editBitmap = panel;
+                // 显示当前位图对象
                 imgEditingPic.setImageBitmap(editBitmap);
             }
         }
@@ -933,6 +979,11 @@ public class EditPicActivity extends BaseActivity {
                     .setCancelable(false)
                     .setMessage(R.string.dialog_info_quit_msg)
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        /**
+                         * 对话框中的取消按钮被点击后回调
+                         * @param dialog    事件源所在的对话框
+                         * @param which 点击选项
+                         */
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // 将放弃修改改成false
@@ -940,6 +991,11 @@ public class EditPicActivity extends BaseActivity {
                         }
                     })
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        /**
+                         * 对话框中的确定按钮被点击后回调
+                         * @param dialog    事件源所在的对话框
+                         * @param which 点击选项
+                         */
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // 将放弃修改改成true
@@ -970,6 +1026,7 @@ public class EditPicActivity extends BaseActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         } else {
+            // 回调父类，销毁当前活动
             super.onBackPressed();
         }
     }

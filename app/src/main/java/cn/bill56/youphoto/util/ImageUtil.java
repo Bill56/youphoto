@@ -36,7 +36,9 @@ public class ImageUtil {
         float bitmapHeight = bmp.getHeight();
         // 初始化布局效果
         int index = 0;
+        // 从0到高度值遍历像素
         for (int y = 0; y <= HEIGHT; y++) {
+            // 计算换算比例
             float fy = bitmapHeight * y / HEIGHT;
             for (int x = 0; x <= WIDTH; x++) {
                 float fx = bitmapWidth * x / WIDTH;
@@ -50,6 +52,7 @@ public class ImageUtil {
         for (int j = 0; j <= HEIGHT; j++) {
             for (int i = 0; i <= WIDTH; i++) {
                 verts[(j * (WIDTH + 1) + i) * 2 + 0] += 0;
+                // 计算某一点y的偏移量
                 float offsetY =
                         (float) Math.sin((float) i / WIDTH * 2 * Math.PI +
                                 Math.PI);
@@ -57,6 +60,7 @@ public class ImageUtil {
                         orig[(j * WIDTH + i) * 2 + 1] + offsetY * A;
             }
         }
+        // 重绘位图对象
         canvas.drawBitmapMesh(bm, WIDTH, HEIGHT,
                 verts, 0, null, 0, null);
         return bmp;
@@ -80,6 +84,7 @@ public class ImageUtil {
         matrix.setRotate(degree, x, y);
         // 创建画布
         Canvas canvas = new Canvas(bmp);
+        // 重绘位图对象
         canvas.drawBitmap(bm, matrix, null);
         return bmp;
     }
@@ -106,7 +111,9 @@ public class ImageUtil {
         colorMatrix.set(colorMatrixPots);
         // 设置画笔
         Paint paint = new Paint();
+        // 给画笔设置颜色矩阵
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        // 重绘位图对象
         canvas.drawBitmap(bm, 0, 0, paint);
         return bmp;
     }
@@ -133,7 +140,9 @@ public class ImageUtil {
         colorMatrix.set(colorMatrixPots);
         // 设置画笔
         Paint paint = new Paint();
+        // 为画笔设置颜色矩阵
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        // 重绘位图对象
         canvas.drawBitmap(bm, 0, 0, paint);
         return bmp;
     }
@@ -160,7 +169,9 @@ public class ImageUtil {
         colorMatrix.set(colorMatrixPots);
         // 设置画笔
         Paint paint = new Paint();
+        // 给画笔设置颜色矩阵
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        // 重绘位图对象
         canvas.drawBitmap(bm, 0, 0, paint);
         return bmp;
     }
@@ -187,7 +198,9 @@ public class ImageUtil {
         colorMatrix.set(colorMatrixPots);
         // 设置画笔
         Paint paint = new Paint();
+        // 为画笔设置颜色矩阵
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        // 重绘位图对象
         canvas.drawBitmap(bm, 0, 0, paint);
         return bmp;
     }
@@ -214,7 +227,9 @@ public class ImageUtil {
         colorMatrix.set(colorMatrixPots);
         // 设置画笔
         Paint paint = new Paint();
+        // 为画笔设置颜色矩阵
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        // 重绘位图对象
         canvas.drawBitmap(bm, 0, 0, paint);
         return bmp;
     }
@@ -242,14 +257,21 @@ public class ImageUtil {
         for (int i = 1; i < width * height; i++) {
             // 前一个像素点
             color = oldPx[i - 1];
+            // 获取前一个像素的红色分量
             r = Color.red(color);
+            // 获取前一个像素的绿色分量
             g = Color.green(color);
+            // 获取前一个像素的蓝色分量
             b = Color.blue(color);
+            // 获取前一个像素的alpha通道值
             a = Color.alpha(color);
             // 当前像素点
             color1 = oldPx[i];
+            // 获取当前像素的红色分量
             r1 = Color.red(color1);
+            // 获取当前像素的绿色分量
             g1 = Color.green(color1);
+            // 获取当前像素的蓝色分量
             b1 = Color.blue(color1);
             // 浮雕的转换算法
             r = (r - r1 + 127);

@@ -81,9 +81,16 @@ public class PicturesActivity extends BaseActivity {
     // 选项菜单对象
     private MenuItem itemLayout;
 
+    /**
+     * 创建活动的时候回调
+     *
+     * @param savedInstanceState 保存实例的对象
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 回调父类
         super.onCreate(savedInstanceState);
+        // 加载布局
         setContentView(R.layout.activity_pictures);
         // 将自身赋给instance
         instance = this;
@@ -99,11 +106,13 @@ public class PicturesActivity extends BaseActivity {
     private void initView() {
         // 初始化工具栏布局
         toolbar = (Toolbar) findViewById(R.id.toolBar);
+        // 将工具栏替换成actionBar
         setSupportActionBar(toolbar);
         // 获得ActionBar
         ActionBar actionBar = getSupportActionBar();
         // 设置顶部返回键
         actionBar.setDisplayHomeAsUpEnabled(true);
+        // 设置顶部标题
         actionBar.setTitle(R.string.activity_pictures_title);
         // 绑定线性布局
         llFileListEmpty = (LinearLayout) findViewById(R.id.ll_file_list_empt);
@@ -124,6 +133,11 @@ public class PicturesActivity extends BaseActivity {
             // 设置适配器
             recyclerViewPictures.setAdapter(pictureAdapter);
             pictureAdapter.setOnItemClickListener(new PictureAdapter.OnItemClickListener() {
+                /**
+                 * 自定义图片点击选择的回调
+                 * @param view     事件源
+                 * @param position 位置
+                 */
                 @Override
                 public void onItemClick(View view, int position) {
                     if (actionMode != null) {
@@ -144,6 +158,11 @@ public class PicturesActivity extends BaseActivity {
                     }
                 }
 
+                /**
+                 * 自定义图片长按后回调
+                 * @param view     事件源
+                 * @param position 位置
+                 */
                 @Override
                 public void onItemLongClick(View view, int position) {
                     if (actionMode == null) {
@@ -152,10 +171,15 @@ public class PicturesActivity extends BaseActivity {
                 }
             });
         } else {
+            // 数据为空的时候显示的背景图
+            // 调用方法
             showLayoutWhenDataEmpty();
         }
     }
 
+    /**
+     * 数据为空的时候显示的背景图
+     */
     public void showLayoutWhenDataEmpty() {
         // 隐藏列表视图
         recyclerViewPictures.setVisibility(View.GONE);
@@ -220,10 +244,12 @@ public class PicturesActivity extends BaseActivity {
         switch (item.getItemId()) {
             // 点击的是向上按钮，将其功能改成返回键
             case android.R.id.home:
+                // 回调点击返回键的方法
                 onBackPressed();
                 break;
             // 点击的是布局切换菜单
             case R.id.action_layout:
+                // 执行切换布局方法
                 doLayoutSwitch(item);
                 break;
             default:
@@ -418,12 +444,17 @@ public class PicturesActivity extends BaseActivity {
                     .setView(dialogView);
             // 设置对话框选择确定后执行的方法
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                /**
+                 * 点击对话框中的确定按钮执行
+                 * @param dialog    事件源所在的对话框对象
+                 * @param which 被执行的选项
+                 */
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // 将选择存储选项存储
                     editor.putBoolean("IS_HINT", !cbNoHint.isChecked());
                     // 将当前选择布局也存储选项存储
-                    editor.putInt("SELECT_LAYOUT",selectedLayout);
+                    editor.putInt("SELECT_LAYOUT", selectedLayout);
                     editor.commit();
                     // 让对话框消失
                     dialog.dismiss();
@@ -433,8 +464,14 @@ public class PicturesActivity extends BaseActivity {
             });
             // 设置对话框选择取消后执行的方法
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                /**
+                 * 点击对话框中的取消按钮执行
+                 * @param dialog    事件源所在的对话框对象
+                 * @param which 被执行的选项
+                 */
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    // 关闭对话框
                     dialog.dismiss();
                     // 销毁活动
                     finish();
@@ -447,6 +484,7 @@ public class PicturesActivity extends BaseActivity {
         } else {
             // 否则直接保存当前布局索引到选项存储
             editor.putInt("SELECT_LAYOUT", selectedLayout);
+            // 提交编辑器
             editor.commit();
             super.onBackPressed();
         }

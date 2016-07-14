@@ -18,7 +18,9 @@ public class TimeUtil {
     public static String timestamp2string(long currentTime) {
         // 根据当前毫秒数创建时间戳
         Timestamp timestamp = new Timestamp(currentTime);
+        // 创建简单的日期格式转换器
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        // 转换成字符串
         String str = sdf.format(timestamp);
         return str;
     }

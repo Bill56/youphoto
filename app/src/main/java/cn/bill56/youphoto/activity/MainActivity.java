@@ -25,6 +25,8 @@ import cn.bill56.youphoto.util.ToastUtil;
 
 /**
  * 承载主界面布局的活动，可以在此界面选择需要编辑的图片
+ *
+ * @author Bill56
  */
 public class MainActivity extends BaseActivity {
 
@@ -55,9 +57,16 @@ public class MainActivity extends BaseActivity {
     // 选择图片的路径
     private String imageSelPath;
 
+    /**
+     * 创建活动时回调
+     *
+     * @param savedInstanceState 保存实例的对象
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 回调父类
         super.onCreate(savedInstanceState);
+        // 加载布局
         setContentView(R.layout.activity_main);
         // 初始化导航
         initView();
@@ -70,8 +79,9 @@ public class MainActivity extends BaseActivity {
         // 初始化工具栏布局
         toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
-        // 设置顶部返回键
+        // 设置顶部返回键可见
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // 设置顶部的标题
         getSupportActionBar().setTitle(R.string.activity_main_title);
         // 绑定选择按钮
         btnSelpic = (Button) findViewById(R.id.btn_selpic);
@@ -112,7 +122,7 @@ public class MainActivity extends BaseActivity {
             // 点击的是显示图片作品的菜单项
             case R.id.action_show_pictures:
                 // 开启活动
-                Intent picIntent = new Intent(this,PicturesActivity.class);
+                Intent picIntent = new Intent(this, PicturesActivity.class);
                 startActivity(picIntent);
                 break;
             default:
@@ -214,9 +224,13 @@ public class MainActivity extends BaseActivity {
      * @param data 回传的intent对象
      */
     private void handleImageBeforeKitkat(Intent data) {
+        // 获取Inten对应的tUri对象
         Uri uri = data.getData();
+        // 设置为图片的uri
         imageUri = uri;
+        // 获得路径
         imageSelPath = getImagePath(uri, null);
+        // 显示图片
         displayImage(imageSelPath);
     }
 
@@ -246,13 +260,17 @@ public class MainActivity extends BaseActivity {
      * @param imagePath 图片路径
      */
     private void displayImage(String imagePath) {
+        // 当图片不经不为空的时候
         if (imagePath != null) {
+            // 调用剪裁程序
             Intent intent = new Intent("com.android.camera.action.CROP");
             intent.setDataAndType(imageUri, "image/*");
             intent.putExtra("scale", true);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            // 启动剪裁程序
             startActivityForResult(intent, CROP_PHOTO);
         } else {
+            // 路径不存在，则提示用户
             ToastUtil.show(this, R.string.fail_get_image);
         }
     }
@@ -266,8 +284,10 @@ public class MainActivity extends BaseActivity {
         long currentTime = System.currentTimeMillis();
         // 当两次按下的时间在2秒内的时候
         if (currentTime - lastBackPressed < 2000) {
+            // 回调父类，销毁活动
             super.onBackPressed();
         } else {
+            // 提示用户再按一次
             ToastUtil.show(this, R.string.activity_toast_quit);
         }
         lastBackPressed = currentTime;
@@ -278,15 +298,22 @@ public class MainActivity extends BaseActivity {
      */
     class OnButtonListener implements View.OnClickListener {
 
+        /**
+         * 被监听的事件源被点击后执行
+         *
+         * @param v 事件源对象
+         */
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 // 点击的选择图片
                 case R.id.btn_selpic:
+                    // 执行从图库选择图片的方法
                     doSelpic();
                     break;
                 // 点击的拍照
                 case R.id.btn_takeaphoto:
+                    // 执行调用手机拍照的方法
                     doTakeaphoto();
                     break;
                 default:

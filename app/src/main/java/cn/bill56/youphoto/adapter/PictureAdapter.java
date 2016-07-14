@@ -61,13 +61,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     public ViewHolder onCreateViewHolder(
             ViewGroup parent,
             int viewType) {
-        if (viewType == 1) {
-
-        } else if (viewType == 2) {
-
-        } else {
-
-        }
+        // 加载布局
         View v = inflater.inflate(R.layout.card_picture, parent, false);
         return new ViewHolder(v);
     }
@@ -86,12 +80,22 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         holder.setData(f, position);
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * 被监听对象点击后回调
+                 * @param v 事件源
+                 */
                 @Override
                 public void onClick(View v) {
                     onItemClickListener.onItemClick(v, position);
                 }
             });
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+                /**
+                 * 被监听对象长按后回调
+                 * @param v 事件源
+                 * @return true表示本层已经处理完毕，false表示要给父层再处理
+                 */
                 @Override
                 public boolean onLongClick(View v) {
                     onItemClickListener.onItemLongClick(v, position);
@@ -177,6 +181,12 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
             textFilePath = (TextView) itemView.findViewById(R.id.text_file_path);
         }
 
+        /**
+         * 绑定数据
+         *
+         * @param item     被绑定的文件项
+         * @param position 被绑定的文件项所在的索引号
+         */
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         public void setData(File item, int position) {
             Set<Integer> positionSet = PicturesActivity.instance.positionSet;

@@ -36,7 +36,9 @@ public class ActivityUtil {
      * 销毁所有活动
      */
     public static void finishAll() {
+        // 遍历活动列表，销毁所有活动
         for (BaseActivity activity : activities) {
+            // 当前活动没有正在执行销毁操作，则销毁
             if (!activity.isFinishing()) {
                 activity.finish();
             }
@@ -49,8 +51,11 @@ public class ActivityUtil {
      * @param activity 不希望被销毁的活动
      */
     public static void finishExcept(BaseActivity activity) {
+        // 遍历活动列表
         for (BaseActivity ba : activities) {
+            // 当前活动没有正在执行销毁操作，并且不是希望被销毁的活动
             if (!ba.isFinishing() && ba != activity) {
+                // 销毁
                 ba.finish();
             }
         }
